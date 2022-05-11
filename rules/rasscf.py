@@ -22,13 +22,3 @@ class RASSCFEnergy(me.Rule):
         self.state.clear()
         return copy
 
-
-me.DEBUG = True
-parser = me.MolcasParser(RASSCFEnergy())
-parser.cli()
-
-# with open("FMNhq_Ph-2.log", "r") as log:
-#     data = log.read()
-#
-# parsed = parser.feed(data)
-# print(json.dumps(parsed, indent=4))
