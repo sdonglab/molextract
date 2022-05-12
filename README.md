@@ -15,3 +15,24 @@ Any file that has certain start / end markers can use the same infrastructure.
 
 ## Examples
 
+## In Progress Development
+There are some improvments I would like to make to the codebase. For starters, its clear that
+there is a lot of room for abstraction. I think the following abstraction make sense
+
+`ModuleRule`
+- Abstract out the trigger / end
+- Abstract out set_iter
+- Abstract out feed
+
+`LogRule`
+- Abstract out the trigger / end
+- Abstract out set_iter
+- Abstract out feed
+
+`TRIGGER / END`
+These could possibly be used in `Rule` and not need to be passed in via the constructor. The
+default values to the constructor could perhaps be these potentially overwridden constants.
+
+`ModuleTimeRule`
+Parse out the `Module scf spent 2 hours 29 minutes 57 seconds` stuff
+
