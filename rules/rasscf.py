@@ -1,5 +1,6 @@
 import molextract as me
 
+
 class RASSCFEnergy(me.Rule):
 
     TRIGGER = r"::    RASSCF root number"
@@ -10,7 +11,7 @@ class RASSCFEnergy(me.Rule):
         self.state = []
 
     def energy(self, line):
-        return float(line.split()[7])
+        return line.split()[7]
 
     def feed(self, line):
         self.state.append(self.energy(line))
@@ -18,7 +19,106 @@ class RASSCFEnergy(me.Rule):
             self.state.append(self.energy(line))
 
     def clear(self):
-        copy = self.state.copy()
+        floats = [float(e) for e in self.state]
         self.state.clear()
-        return copy
+        return floats
 
+
+class RASSCFOccupation(me.Rule):
+
+    TRIGGER = "\s+Natural orbitals and occupation numbers"
+    END = r"^\s+$"
+
+    def __init__(self):
+        super().__init__(self.TRIGGER, self.END)
+        self.state = []
+
+    def feed(self, line):
+        occupation = []
+        for line in self:
+            line = line.strip()
+            if line.startswith("sym"):
+                occupation.extend(line.split()[2:])
+            else:
+                occupation.extend(line.split())
+
+        self.state.append(occupation)
+
+    def clear(self):
+        floats = []
+        for root in self.state:
+            floats.append([float(o) for o in root])
+        self.state.clear()
+        return floats
+
+
+class RASSCFCiCoeff(me.Rule):
+
+    TRIGGER = "\s+ printout of CI-coefficients larger than"
+    END = r"^\s+$"
+
+    def __init__(self):
+        super().__init__(self.TRIGGER, self.END)
+        self.state = []
+
+    def feed(self, line):
+        # Don't care about next two lines
+        self.skip(2)
+        coeffs = []
+        for line in self:
+            coeffs.append(line.split())
+
+        self.state.append(coeffs)
+
+    def clear(self):
+        out = []
+        for root in self.state:
+            coeffs = []
+            for data in root:
+                conf_sym = int(data[0])
+                occupation = data[1]
+                coeff = float(data[2])
+                weight = float(data[3])
+
+                coeffs.append([conf_sym, occupation, coeff, weight])
+            out.append(coeffs)
+
+        self.state.clear()
+        return out
+
+
+class RASSCFModule(me.Rule):
+
+    TRIGGER = r"^--- Start Module: rasscf"
+    END = r"--- Stop Module: rasscf"
+
+    def __init__(self):
+        super().__init__(self.TRIGGER, self.END)
+        self.rules = [RASSCFEnergy(), RASSCFCiCoeff(), RASSCFOccupation()]
+
+    def set_iter(self, iterator):
+        super().set_iter(iterator)
+        for rule in self.rules:
+            rule.set_iter(iterator)
+
+    def feed(self, line):
+        for line in self:
+            for rule in self.rules:
+                if rule.startswith(line):
+                    rule.feed(line)
+                    break
+
+    def clear(self):
+        results = [rule.clear() for rule in self.rules]
+        out = {}
+        out["module"] = "rasscf"
+        out["roots"] = len(results[0])
+        out["data"] = []
+        for i, root in enumerate(results[0]):
+            root_dict = {"root": i + 1}
+            root_dict["total_energy"] = root
+            root_dict["ci_coeff"] = results[1][i]
+            root_dict["occupation"] = results[2][i]
+            out["data"].append(root_dict)
+
+        return out
