@@ -1,4 +1,5 @@
 import molextract as me
+from molextract.rules import abstract
 
 
 class RASSIDipoleStrengths(me.Rule):
@@ -29,26 +30,11 @@ class RASSIDipoleStrengths(me.Rule):
         return copy
 
 
-class RASSIModule(me.Rule):
-
-    TRIGGER = r"^--- Start Module: rassi"
-    END = r"--- Stop Module: rassi"
+class RASSIModule(abstract.ModuleRule):
 
     def __init__(self):
-        super().__init__(self.TRIGGER, self.END)
-        self.rules = [RASSIDipoleStrengths()]
-
-    def set_iter(self, iterator):
-        super().set_iter(iterator)
-        for rule in self.rules:
-            rule.set_iter(iterator)
-
-    def feed(self, line):
-        for line in self:
-            for rule in self.rules:
-                if rule.startswith(line):
-                    rule.feed(line)
-                    break
+        rules = [RASSIDipoleStrengths()]
+        super().__init__("rassi", rules)
 
     def clear(self):
         results = [rule.clear() for rule in self.rules]

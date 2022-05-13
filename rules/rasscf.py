@@ -1,4 +1,5 @@
 import molextract as me
+from molextract.rules import abstract
 
 
 class RASSCFEnergy(me.Rule):
@@ -87,26 +88,11 @@ class RASSCFCiCoeff(me.Rule):
         return out
 
 
-class RASSCFModule(me.Rule):
-
-    TRIGGER = r"^--- Start Module: rasscf"
-    END = r"--- Stop Module: rasscf"
+class RASSCFModule(abstract.ModuleRule):
 
     def __init__(self):
-        super().__init__(self.TRIGGER, self.END)
-        self.rules = [RASSCFEnergy(), RASSCFCiCoeff(), RASSCFOccupation()]
-
-    def set_iter(self, iterator):
-        super().set_iter(iterator)
-        for rule in self.rules:
-            rule.set_iter(iterator)
-
-    def feed(self, line):
-        for line in self:
-            for rule in self.rules:
-                if rule.startswith(line):
-                    rule.feed(line)
-                    break
+        rules = [RASSCFEnergy(), RASSCFCiCoeff(), RASSCFOccupation()]
+        super().__init__("rasscf", rules)
 
     def clear(self):
         results = [rule.clear() for rule in self.rules]

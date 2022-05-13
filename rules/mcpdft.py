@@ -1,4 +1,5 @@
 import molextract as me
+from molextract.rules import abstract
 
 
 class MCPDFTEnergy(me.Rule):
@@ -20,26 +21,11 @@ class MCPDFTEnergy(me.Rule):
         return floats
 
 
-class MCPDFTModule(me.Rule):
-
-    TRIGGER = r"^--- Start Module: mcpdft"
-    END = r"--- Stop Module: mcpdft"
+class MCPDFTModule(abstract.ModuleRule):
 
     def __init__(self):
-        super().__init__(self.TRIGGER, self.END)
-        self.rules = [MCPDFTEnergy()]
-
-    def set_iter(self, iterator):
-        super().set_iter(iterator)
-        for rule in self.rules:
-            rule.set_iter(iterator)
-
-    def feed(self, line):
-        for line in self:
-            for rule in self.rules:
-                if rule.startswith(line):
-                    rule.feed(line)
-                    break
+        rules = [MCPDFTEnergy()]
+        super().__init__("mcpdft", rules)
 
     def clear(self):
         results = [rule.clear() for rule in self.rules]
