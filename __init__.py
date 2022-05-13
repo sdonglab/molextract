@@ -8,7 +8,7 @@ __author__ = "Nithin Chintala"
 __email__ = "chintala.v@northeastern.edu"
 __version__ = "0.2"
 
-DEBUG = True
+DEBUG = False
 RED = "\x1b[31m"
 GREEN = "\x1b[32m"
 RESET = "\x1b[0m"
@@ -45,7 +45,6 @@ class Rule:
         self.iterator = iterator
 
     def startswith(self, line):
-        global tab_level
         if self.trigger.match(line):
             debug('{:<100} {}triggered{} {}'.format(line, GREEN, RESET,
                                                     self.name()))
@@ -53,7 +52,6 @@ class Rule:
         return False
 
     def endswith(self, line):
-        global tab_level
         if self.end.match(line):
             debug('{:<100} {}ended    {} {}'.format(line, RED, RESET,
                                                     self.name()))
