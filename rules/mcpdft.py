@@ -20,11 +20,29 @@ class MCPDFTEnergy(me.Rule):
         self.state.clear()
         return floats
 
+class MCPDFTRefEnergy(me.Rule):
+
+    TRIGGER = r"\s+MCSCF reference energy"
+    END = r"^\s+$"
+
+    def __init__(self):
+        super().__init__(self.TRIGGER, self.END)
+        self.state = []
+
+    def feed(self, line):
+        energy = line.split()[3]
+        self.state.append(energy)
+
+    def clear(self):
+        floats = [float(e) for e in self.state]
+        self.state.clear()
+        return floats
+
 
 class MCPDFTModule(abstract.ModuleRule):
 
     def __init__(self):
-        rules = [MCPDFTEnergy()]
+        rules = [MCPDFTRefEnergy(), MCPDFTEnergy()]
         super().__init__("mcpdft", rules)
 
     def clear(self):
@@ -33,9 +51,10 @@ class MCPDFTModule(abstract.ModuleRule):
         out["module"] = "mcpdft"
         out["roots"] = len(results[0])
         out["data"] = []
-        for i, root in enumerate(results[0]):
+        for i, root in enumerate(results[1]):
             root_dict = {}
             root_dict["total_energy"] = root
+            root_dict["mcsf_ref_energy"] = results[0][i]
             out["data"].append(root_dict)
 
         return out
