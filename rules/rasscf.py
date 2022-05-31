@@ -87,11 +87,38 @@ class RASSCFCiCoeff(me.Rule):
         self.state.clear()
         return out
 
+class RASSCFOrbSpec(me.Rule):
+    TRIGGER = r"\+\+    Orbital specifications:"
+    END = r"--"
+
+    def __init__(self):
+        super().__init__(self.TRIGGER, self.END)
+        self.state = {
+            "active_orbs": None,
+            "num_basis_funcs": None
+        }
+
+    def feed(self, line):
+        # Don't care about next two lines
+        self.skip(2)
+        for line in self:
+            last = line.split()[-1]
+            if "Active orbitals" in line:
+                self.state["active_orbs"] = int(last)
+            elif "Number of basis functions" in line:
+                self.state["num_basis_funcs"] = int(last)
+
+
+    def clear(self):
+        tmp = self.state.copy()
+        self.state.clear()
+        return tmp
+
 
 class RASSCFModule(abstract.ModuleRule):
 
     def __init__(self):
-        rules = [RASSCFEnergy(), RASSCFCiCoeff(), RASSCFOccupation()]
+        rules = [RASSCFEnergy(), RASSCFCiCoeff(), RASSCFOccupation(), RASSCFOrbSpec()]
         super().__init__("rasscf", rules)
 
     def clear(self):
@@ -107,4 +134,4 @@ class RASSCFModule(abstract.ModuleRule):
             root_dict["occupation"] = results[2][i]
             out["data"].append(root_dict)
 
-        return out
+        return results[3] | out
