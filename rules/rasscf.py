@@ -114,11 +114,35 @@ class RASSCFOrbSpec(me.Rule):
         self.state.clear()
         return tmp
 
+class RASSCFCIExpansionSpec(me.Rule):
+    TRIGGER = r"\+\+    CI expansion specifications:"
+    END = r"--"
+
+    def __init__(self):
+        super().__init__(self.TRIGGER, self.END)
+        self.state = {
+            "num_roots": None
+        }
+
+    def feed(self, line):
+        # Don't care about next two lines
+        self.skip(2)
+        for line in self:
+            last = line.split()[-1]
+            if "Number of root(s) required" in line:
+                self.state["num_roots"] = int(last)
+
+    def clear(self):
+        tmp = self.state.copy()
+        self.state.clear()
+        return tmp
+
+
 
 class RASSCFModule(abstract.ModuleRule):
 
     def __init__(self):
-        rules = [RASSCFEnergy(), RASSCFCiCoeff(), RASSCFOccupation(), RASSCFOrbSpec()]
+        rules = [RASSCFEnergy(), RASSCFCiCoeff(), RASSCFOccupation(), RASSCFOrbSpec(), RASSCFCIExpansionSpec()]
         super().__init__("rasscf", rules)
 
     def clear(self):
@@ -134,4 +158,4 @@ class RASSCFModule(abstract.ModuleRule):
             root_dict["occupation"] = results[2][i]
             out["data"].append(root_dict)
 
-        return results[3] | out
+        return results[3] | results[3] |  out
