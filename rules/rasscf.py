@@ -130,7 +130,7 @@ class RASSCFCIExpansionSpec(me.Rule):
         for line in self:
             last = line.split()[-1]
             if "Number of root(s) required" in line:
-                self.state["num_roots"] = int(last)
+                self.state["roots"] = int(last)
 
     def clear(self):
         tmp = self.state.copy()
@@ -149,7 +149,6 @@ class RASSCFModule(abstract.ModuleRule):
         results = [rule.clear() for rule in self.rules]
         out = {}
         out["module"] = "rasscf"
-        out["roots"] = len(results[0])
         out["data"] = []
         for i, root in enumerate(results[0]):
             root_dict = {"root": i + 1}
@@ -158,4 +157,4 @@ class RASSCFModule(abstract.ModuleRule):
             root_dict["occupation"] = results[2][i]
             out["data"].append(root_dict)
 
-        return results[3] | results[3] |  out
+        return results[3] | results[4] |  out
