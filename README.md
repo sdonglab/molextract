@@ -94,18 +94,18 @@ class RASSCFOrbSpec(me.Rule):
 
 ```
 First notice how the data itself has very obvious start / end "tags". Namely the data starts
-with `++    Orbital specifications:` and ends with `--`. These are then percisely our RegExs
+with `++    Orbital specifications:` and ends with `--`. These are then precisely our RegExs
 we define for our Rule, see the `TRIGGER` and `END` variables.
 
 The `feed` method will only execute when a line matches `TRIGGER`. Once we
-are executing this code we can iteratre through each line following the `TRIGGER` until we
+are executing this code we can iterate through each line following the `TRIGGER` until we
 reach `END`. This is encapsulated in `for line in self`. At this point we know exactly at which
 point in the file we are in and we can proceed to do what we want. In our case we want some
-specific number so we write some standard python string maniuplation code.
+specific number so we write some standard python string manipulation code.
 
 The `clear` method is a mechanism to allow the re-use of Rule between multiple files as there
-may be some state that needs to be reset. Understandiing this mechanism is ancillary to the core
-conept of Rules in `molextract`.
+may be some state that needs to be reset. Understanding this mechanism is ancillary to the core
+concept of Rules in `molextract`.
 
 This was a simple rule. `molextract` allows us to nest rules so we can build complex rules that
 describe an entire module or an entire calculation. See `examples/excited_state.py` and try to
@@ -122,7 +122,7 @@ follow the chain as described below.
     * MCPDFTRefEnergy
     * MCPDFTEnergy
   > RASSIModule
-   * RASSIDipoleStrengths
+    * RASSIDipoleStrengths
 ```
 
 

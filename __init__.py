@@ -58,7 +58,7 @@ class Rule:
             return True
         return False
 
-    def feed(self, line, upcomong):
+    def feed(self, line):
         raise NotImplementedError
 
     def clear(self):
