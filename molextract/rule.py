@@ -1,5 +1,6 @@
 import re
 
+
 class Rule:
     """
     :cvar START_TAG: The regular expression that defines when to begin parsing
@@ -7,6 +8,10 @@ class Rule:
     :cvar CHECK_ONLY_BEGINNING: whether the START_TAG and END_TAG should only
         attempt to match at the start of the string as opposed to match anywhere
         in the string
+    
+    NOTE: once a Rule has been instantiated changing START_TAG or END_TAG will
+    have no effect on the regular expression matching used internally for that
+    instance.
     """
     START_TAG = r".*"
     END_TAG = r".*"
@@ -16,7 +21,7 @@ class Rule:
         self._start_tag = re.compile(self.START_TAG)
         self._end_tag = re.compile(self.END_TAG)
         self._iterator = None
-    
+
     def set_iter(self, iterator):
         """
         Set the internal iterator used to read lines from
@@ -25,7 +30,7 @@ class Rule:
         :type iterator: Iterator[str]
         """
         self._iterator = iterator
-    
+
     def start_tag_matches(self, line):
         """
         Whether this rule's START_TAG matches the given line
@@ -35,8 +40,7 @@ class Rule:
         :return: whether the match was successful
         :rtype: bool
         """
-        return self._match(self.START_TAG, line)
-
+        return self._match(self._start_tag, line)
 
     def end_tag_matches(self, line):
         """
@@ -48,15 +52,15 @@ class Rule:
         :rtype: bool
         """
 
-        return self._match(self.END_TAG, line)
-
+        return self._match(self._end_tag, line)
 
     def _match(self, compiled_re, line):
         if self.CHECK_ONLY_BEGINNING:
-            return compiled_re.match(line)
-        
-        return compiled_re.search(line)
+            match = compiled_re.match(line)
+        else:
+            match = compiled_re.search(line)
 
+        return match is not None
 
     def process_lines(self, start_line):
         """
@@ -100,7 +104,6 @@ class Rule:
         :rtype: Any
         """
         raise NotImplementedError
-        
 
     def skip(self, n):
         """
@@ -114,7 +117,7 @@ class Rule:
 
     def __iter__(self):
         return self
-    
+
     def __next__(self):
         line = next(self._iterator)
         if self.end_tag_matches(line):
@@ -122,6 +125,7 @@ class Rule:
             raise StopIteration
 
         return line
+
 
 class SingleLineRule(Rule):
     pass
