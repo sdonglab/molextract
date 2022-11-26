@@ -5,23 +5,15 @@ import pytest
 from molextract.rule import Rule
 
 
-class FooRule(Rule):
-    START_TAG = "Foo"
-    END_TAG = "Bar"
-
-    def process_lines(self, start_line):
-        pass
-
-
 def test_start_tag_matches():
-    rule = FooRule()
+    rule = Rule("Foo", "Bar")
 
     assert rule.start_tag_matches("Foo")
     assert rule.start_tag_matches("Foo suffix")
     assert not rule.start_tag_matches("prefix Foo")
     assert not rule.start_tag_matches("prefix Foo suffix")
 
-    rule.CHECK_ONLY_BEGINNING = False
+    rule = Rule("Foo", "Bar", False)
 
     assert rule.start_tag_matches("Foo")
     assert rule.start_tag_matches("Foo suffix")
@@ -30,14 +22,14 @@ def test_start_tag_matches():
 
 
 def test_end_tag_matches():
-    rule = FooRule()
+    rule = Rule("Foo", "Bar")
 
     assert rule.end_tag_matches("Bar")
     assert rule.end_tag_matches("Bar suffix")
     assert not rule.end_tag_matches("prefix Bar")
     assert not rule.end_tag_matches("prefix Bar suffix")
 
-    rule.CHECK_ONLY_BEGINNING = False
+    rule = Rule("Foo", "Bar", False)
 
     assert rule.end_tag_matches("Bar")
     assert rule.end_tag_matches("Bar suffix")
@@ -46,7 +38,7 @@ def test_end_tag_matches():
 
 
 def test_skip():
-    rule = FooRule()
+    rule = Rule("Foo", "Bar")
     rule.set_iter(iter("abcd"))
 
     assert next(rule) == "a"
@@ -55,7 +47,7 @@ def test_skip():
 
 
 def test_on_end_tag_matched():
-    rule = FooRule()
+    rule = Rule("Foo", "Bar")
     rule.on_end_tag_matched = mock.Mock()
     rule.set_iter(iter(["Bar"]))
 
@@ -68,7 +60,7 @@ def test_on_end_tag_matched():
 
 
 def test_rule_iter():
-    rule = FooRule()
+    rule = Rule("Foo", "Bar")
     lines = ["Foo", "data1", "data2", "Bar", "data3"]
 
     rule.set_iter(iter(lines))

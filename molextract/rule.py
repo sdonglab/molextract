@@ -17,19 +17,20 @@ class Rule:
     Rule explicitly defines these rules via RegularExpression. So describe the
     above data we can have a rule as follows:
 
-        class TestRule:
-            START_TAG = "BEGIN DATA"
-            END_TAG = "END DATA"
+        class TestRule(Rule):
+
+            def __init__():
+                super().__init__("BEGIN DATA", "END DATA")
 
     To set the the data this rule should parse we call the `set_iter` method:
 
         rule = TestRule()
         rule.set_iter(<iterator>)
 
-    To actually gain access to this data we define a method process_lines:
+    To actually gain access to this data we define a method `process_lines`:
 
         def __init__(self):
-            super().__init__
+            super().__init__("BEGIN DATA", "END DATA")
             self.data = []
 
         def process_lines(self, start_line):
@@ -39,7 +40,7 @@ class Rule:
                 self.data.append(nums)
 
     The rule will only iterate though the iterator until it find a string that
-    matches the defined END_TAG
+    matches the defined end_tag
 
     To finally get access to the parsed data you should define the `reset` method
     to reset any internal state and return the parsed data. The goal of this method is
@@ -49,25 +50,26 @@ class Rule:
             tmp = self.data.copy()
             self.data.clear()
             return tmp
-
-
-    :cvar START_TAG: The regular expression that defines when to begin parsing
-    :cvar END_TAG: the regular expression that defines when to stop parsing
-    :cvar CHECK_ONLY_BEGINNING: whether the START_TAG and END_TAG should only
-        attempt to match at the start of the string as opposed to match anywhere
-        in the string
-    
-    NOTE: once a Rule has been instantiated changing START_TAG or END_TAG will
-    have no effect on the regular expression matching used internally for that
-    instance.
     """
-    START_TAG = r".*"
-    END_TAG = r".*"
-    CHECK_ONLY_BEGINNING = True
 
-    def __init__(self):
-        self._start_tag = re.compile(self.START_TAG)
-        self._end_tag = re.compile(self.END_TAG)
+    def __init__(self, start_tag=r".*", end_tag=r".*", check_only_beginning=True):
+        """
+        Initialize the Rule with the start and end tags
+
+        :param start_tag: The regular expression that defines when to begin parsing,
+            defaults to r".*"
+        :type start_tag: str
+        :param end_tag: the regular expression that defines when to stop parsing
+            defaults to r".*"
+        :type end_tag: str
+        :param check_only_beginning: whether the start_tag and end_tag should only
+            attempt to match at the start of the string as opposed to match anywhere
+            in the string, defaults to True
+        :type check_only_beginning: bool
+        """
+        self._start_tag = re.compile(start_tag)
+        self._end_tag = re.compile(end_tag)
+        self._check_only_beginning = check_only_beginning
         self._iterator = None
 
     def set_iter(self, iterator):
@@ -81,7 +83,7 @@ class Rule:
 
     def start_tag_matches(self, line):
         """
-        Whether this rule's START_TAG matches the given line
+        Whether this rule's start_tag matches the given line
 
         :param line: the string to match against
         :type line: str
@@ -92,7 +94,7 @@ class Rule:
 
     def end_tag_matches(self, line):
         """
-        Whether this rule's END_TAG matches the given line
+        Whether this rule's end_tag matches the given line
 
         :param line: the string to match against
         :type line: str
@@ -103,7 +105,7 @@ class Rule:
         return self._match(self._end_tag, line)
 
     def _match(self, compiled_re, line):
-        if self.CHECK_ONLY_BEGINNING:
+        if self._check_only_beginning:
             match = compiled_re.match(line)
         else:
             match = compiled_re.search(line)
@@ -114,7 +116,7 @@ class Rule:
         """
         Do the main parsing this rule is responsible for. Within this
         method the following code should represent reading lines between
-        this rule's START_TAG and END_TAG
+        this rule's start_tag and end_tag
 
             for line in self:
                 # Do something with line...
@@ -123,10 +125,10 @@ class Rule:
         to be later retrieved.
         
         NOTE: It is up to the caller to only call this method when a line
-        matches this rule's START_TAG. It is also up to the caller to pass
+        matches this rule's start_tag. It is also up to the caller to pass
         in that matching line to this method
 
-        :param start_line: the line that matched this rule's START_TAG
+        :param start_line: the line that matched this rule's start_tag
         :type start_line: str
         """
         raise NotImplementedError
@@ -134,12 +136,12 @@ class Rule:
     def on_end_tag_matched(self, end_line):
         """
         When iterating through this rule, this callback is ran whenever
-        a line matches this rule's END_TAG
+        a line matches this rule's end_tag
 
         NOTE: this callback is ran BEFORE the StopIteration is raised and
         is only ran once unless explicitly called
 
-        :param end_line: the line that matched this rule's END_TAG
+        :param end_line: the line that matched this rule's end_tag
         :type end_line: str
         """
         pass
