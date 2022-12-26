@@ -1,10 +1,14 @@
 import argparse
 from argparse import RawTextHelpFormatter
 import json
+import sys
 
 DESCRIPTION = """\
 TODO
 """
+
+RED = "\x1b[31m"
+RESET = "\x1b[0m"
 
 def fatal(string):
     print(f"{RED}FATAL{RESET}: {string}", file=sys.stderr)
