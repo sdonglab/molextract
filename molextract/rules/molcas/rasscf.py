@@ -1,8 +1,8 @@
-import molextract as me
-from molextract.rules import abstract
+from molextract.rule import Rule
+from molextract.rules.molcas import log
 
 
-class RASSCFEnergy(me.Rule):
+class RASSCFEnergy(Rule):
 
     TRIGGER = r"::    RASSCF root number"
     END = r"^\s+$"
@@ -25,7 +25,7 @@ class RASSCFEnergy(me.Rule):
         return floats
 
 
-class RASSCFOccupation(me.Rule):
+class RASSCFOccupation(Rule):
 
     TRIGGER = "\s+Natural orbitals and occupation numbers"
     END = r"^\s+$"
@@ -53,7 +53,7 @@ class RASSCFOccupation(me.Rule):
         return floats
 
 
-class RASSCFCiCoeff(me.Rule):
+class RASSCFCiCoeff(Rule):
 
     TRIGGER = "\s+ printout of CI-coefficients larger than"
     END = r"^\s+$"
@@ -87,7 +87,7 @@ class RASSCFCiCoeff(me.Rule):
         self.state.clear()
         return out
 
-class RASSCFOrbSpec(me.Rule):
+class RASSCFOrbSpec(Rule):
     TRIGGER = r"\+\+    Orbital specifications:"
     END = r"--"
 
@@ -114,7 +114,7 @@ class RASSCFOrbSpec(me.Rule):
         self.state.clear()
         return tmp
 
-class RASSCFCIExpansionSpec(me.Rule):
+class RASSCFCIExpansionSpec(Rule):
     TRIGGER = r"\+\+    CI expansion specifications:"
     END = r"--"
 
@@ -139,7 +139,7 @@ class RASSCFCIExpansionSpec(me.Rule):
 
 
 
-class RASSCFModule(abstract.ModuleRule):
+class RASSCFModule(log.ModuleRule):
 
     def __init__(self):
         rules = [RASSCFEnergy(), RASSCFCiCoeff(), RASSCFOccupation(), RASSCFOrbSpec(), RASSCFCIExpansionSpec()]

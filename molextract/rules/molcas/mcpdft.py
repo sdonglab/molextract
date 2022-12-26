@@ -1,11 +1,12 @@
-import molextract as me
+from molextract.rule import Rule
 from molextract.rules import abstract
+from molextract.rules.molcas import log
 
 
-class MCPDFTEnergy(me.Rule):
+class MCPDFTEnergy(Rule):
 
     TRIGGER = r"\s+Total MC-PDFT energy for state"
-    END = r"^\s+$"
+    END = r"\s+$"
 
     def __init__(self):
         super().__init__(self.TRIGGER, self.END)
@@ -20,7 +21,7 @@ class MCPDFTEnergy(me.Rule):
         self.state.clear()
         return floats
 
-class MCPDFTRefEnergy(me.Rule):
+class MCPDFTRefEnergy(Rule):
 
     TRIGGER = r"\s+MCSCF reference energy"
     END = r"^\s+$"
@@ -39,7 +40,7 @@ class MCPDFTRefEnergy(me.Rule):
         return floats
 
 
-class MCPDFTModule(abstract.ModuleRule):
+class MCPDFTModule(log.ModuleRule):
 
     def __init__(self):
         rules = [MCPDFTRefEnergy(), MCPDFTEnergy()]

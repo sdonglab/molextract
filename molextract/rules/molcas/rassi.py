@@ -1,5 +1,5 @@
 import molextract as me
-from molextract.rules import abstract
+from molextract.rules.molcas import log
 
 
 class RASSIDipoleStrengths(me.Rule):
@@ -30,7 +30,7 @@ class RASSIDipoleStrengths(me.Rule):
         return copy
 
 
-class RASSIModule(abstract.ModuleRule):
+class RASSIModule(log.ModuleRule):
 
     def __init__(self):
         rules = [RASSIDipoleStrengths()]
