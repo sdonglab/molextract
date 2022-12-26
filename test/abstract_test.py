@@ -42,16 +42,22 @@ def test_slr_process_lines():
     assert word_rule.reset() == ["1", "2", "3"]
 
 def test_slr_on_end_tag_matched():
+    """
+    SingleLineRule do not support matching end tags
+    """
     int_rule = IntRule()
     int_rule.set_iter(iter("1 2 3".split()))
 
+    # Calling `next` checks against the end tag
     with pytest.raises(ValueError):
         next(int_rule)
 
+    # Iterating implicitly calls `next`
     with pytest.raises(ValueError):
         for _ in int_rule:
             pass
     
+    # Directly call method
     with pytest.raises(ValueError):
         int_rule.end_tag_matches("end_tag")
 
