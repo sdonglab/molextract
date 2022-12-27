@@ -169,7 +169,10 @@ class Rule:
         return self
 
     def __next__(self):
-        line = next(self._iterator)
+        try:
+            line = next(self._iterator)
+        except StopIteration:
+            raise ValueError("Unexpected end of iterator")
         if self.end_tag_matches(line):
             self.on_end_tag_matched(line)
             raise StopIteration

@@ -74,7 +74,9 @@ def test_rule_iter():
 
     lines = ["Baz", "Boom", "Quack"]
     rule.set_iter(iter(lines))
-    assert list(rule) == lines
+    with pytest.raises(ValueError):
+        list(rule)
 
     rule.set_iter(iter([]))
-    assert list(rule) == []
+    with pytest.raises(ValueError):
+        list(rule)

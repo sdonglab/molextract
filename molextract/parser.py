@@ -19,19 +19,15 @@ class Parser:
     def __init__(self, rule):
         self.rule = rule
 
-    def feed(self, data):
-        split = data.split("\n")
+    def feed(self, data, delim='\n'):
+        split = data.split(delim)
         split_iter = iter(split)
         self.rule.set_iter(split_iter)
 
-        try:
-            for line in split_iter:
-                if self.rule.start_tag_matches(line):
-                    self.rule.process_lines(line)
-                    return self.rule.reset()
-        except StopIteration as e:
-            fatal("Unexpected end of file reached...")
-            raise e
+        for line in split_iter:
+            if self.rule.start_tag_matches(line):
+                self.rule.process_lines(line)
+                return self.rule.reset()
 
     def cli(self):
         parser = argparse.ArgumentParser(description=DESCRIPTION,
