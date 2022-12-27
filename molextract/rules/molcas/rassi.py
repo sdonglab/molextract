@@ -14,6 +14,7 @@ class RASSIDipoleStrengths(Rule):
     def process_lines(self, start_line):
         self.skip(5)
         for line in self:
+            print(line)
             split = line.split()
             frum = split[0]
             to = split[1]

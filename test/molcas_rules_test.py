@@ -157,11 +157,53 @@ def test_rasscf_module():
     assert parser.feed(data) == expected_out
 
 
-"""
 def test_rassi_dipole_strengths():
-    assert False, "TODO"
+    parser = Parser(rassi.RASSIDipoleStrengths())
+    data = textwrap.dedent("""\
+    ++ Dipole transition strengths (spin-free states):
+    -----------------------------------------------
+     for osc. strength at least  1.00000000E-05
+ 
+      From   To        Osc. strength     Einstein coefficients Ax, Ay, Az (sec-1)    Total A (sec-1)
+     -----------------------------------------------------------------------------------------------
+         1    2       4.4             2.41045247E+04  1.85073724E+04  4.66033848E+02  4.30779310E+04
+         1    3       5.3             7.07186328E+06  2.59297370E+06  5.60070422E+05  1.02249074E+07
+       --
+    """)
+
+    assert parser.feed(data) == [{
+        "from": 1,
+        "to": 2,
+        "osc_strength": 4.4
+    }, {
+        "from": 1,
+        "to": 3,
+        "osc_strength": 5.3
+    }]
+
 
 def test_rassi_module():
-    assert False, "TODO"
+    parser = Parser(rassi.RASSIModule())
+    data = textwrap.dedent("""\
+    --- Start Module: rassi
+    ++ Dipole transition strengths (spin-free states):
+    -----------------------------------------------
+     for osc. strength at least  1.00000000E-05
+ 
+      From   To        Osc. strength     Einstein coefficients Ax, Ay, Az (sec-1)    Total A (sec-1)
+     -----------------------------------------------------------------------------------------------
+         1    2       4.4             2.41045247E+04  1.85073724E+04  4.66033848E+02  4.30779310E+04
+         1    3       5.3             7.07186328E+06  2.59297370E+06  5.60070422E+05  1.02249074E+07
+       --
+    --- Stop Module: rassi
+    """)
 
-"""
+    assert parser.feed(data) == [[{
+        "from": 1,
+        "to": 2,
+        "osc_strength": 4.4
+    }, {
+        "from": 1,
+        "to": 3,
+        "osc_strength": 5.3
+    }]]
