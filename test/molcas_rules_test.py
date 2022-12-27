@@ -42,15 +42,41 @@ def test_log_rule():
         parser.feed(data)
 
 
-"""
 def test_mcpdft_energy():
-    assert False, "TODO"
+    data = "   Total MC-PDFT energy for state 3 -348.16265964"
+    rule = mcpdft.MCPDFTEnergy()
+
+    assert rule.start_tag_matches(data)
+    assert not rule.start_tag_matches(data.strip())
+    assert rule.process(data) == -348.16265964
 
 def test_mcpdft_ref_energy():
-    assert False, "TODO"
+    data = "   MCSCF reference energy 42"
+    rule = mcpdft.MCPDFTRefEnergy()
+
+    assert rule.start_tag_matches(data)
+    assert not rule.start_tag_matches(data.strip())
+    assert rule.process(data) == 42
 
 def test_mcpdft_module():
-    assert False, "TODO"
+    rule = mcpdft.MCPDFTModule()
+    parser = Parser(rule)
+    with open(molextract_test_file("styrene.log")) as f:
+        data = f.read()
+    
+    expected_out = {
+        "module": "mcpdft",
+        "roots": 5, 
+        "data": [
+            {"mcsf_ref_energy": -346.75437194, "total_energy": -348.41834879},
+            {"mcsf_ref_energy": -346.57995558, "total_energy": -348.23225204},
+            {"mcsf_ref_energy": -346.51012130, "total_energy": -348.16265964},
+            {"mcsf_ref_energy": -346.48096556, "total_energy": -348.25755112},
+            {"mcsf_ref_energy": -346.46964162, "total_energy": -348.13820937},
+        ]
+    } # yapf:disable
+    assert parser.feed(data) == expected_out
+"""
 
 def test_rasscf_energy():
     assert False, "TODO"

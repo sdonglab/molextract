@@ -1,61 +1,48 @@
-from molextract.rule import Rule
-from molextract.rules import abstract
+from molextract.rules.abstract import SingleLineRule
 from molextract.rules.molcas import log
 
 
-class MCPDFTEnergy(Rule):
+class MCPDFTEnergy(SingleLineRule):
 
-    TRIGGER = r"\s+Total MC-PDFT energy for state"
-    END = r"\s+$"
+    START_TAG = r"\s+Total MC-PDFT energy for state"
 
     def __init__(self):
-        super().__init__(self.TRIGGER, self.END)
-        self.state = []
+        super().__init__(self.START_TAG)
 
-    def feed(self, line):
+    def process(self, line):
         energy = line.split()[6]
-        self.state.append(energy)
+        return float(energy)
 
-    def clear(self):
-        floats = [float(e) for e in self.state]
-        self.state.clear()
-        return floats
+class MCPDFTRefEnergy(SingleLineRule):
 
-
-class MCPDFTRefEnergy(Rule):
-
-    TRIGGER = r"\s+MCSCF reference energy"
-    END = r"^\s+$"
+    START_TAG = r"\s+MCSCF reference energy"
 
     def __init__(self):
-        super().__init__(self.TRIGGER, self.END)
-        self.state = []
+        super().__init__(self.START_TAG)
 
-    def feed(self, line):
+    def process(self, line):
         energy = line.split()[3]
-        self.state.append(energy)
-
-    def clear(self):
-        floats = [float(e) for e in self.state]
-        self.state.clear()
-        return floats
-
+        return float(energy)
 
 class MCPDFTModule(log.ModuleRule):
     def __init__(self):
         rules = [MCPDFTRefEnergy(), MCPDFTEnergy()]
         super().__init__("mcpdft", rules)
 
-    def clear(self):
-        results = [rule.clear() for rule in self.rules]
-        out = {}
-        out["module"] = "mcpdft"
-        out["roots"] = len(results[0])
-        out["data"] = []
-        for i, root in enumerate(results[1]):
-            root_dict = {}
-            root_dict["total_energy"] = root
-            root_dict["mcsf_ref_energy"] = results[0][i]
+    def reset(self):
+        results = [rule.reset() for rule in self.rules]
+        ref_energies, energies = results
+        assert len(ref_energies) == len(energies)
+        out = {
+            "module": "mcpdft",
+            "roots": len(ref_energies),
+            "data": []
+        }
+        for ref, energy in zip(ref_energies, energies):
+            root_dict = {
+                "mcsf_ref_energy": ref,
+                "total_energy": energy
+            }
             out["data"].append(root_dict)
 
         return out
