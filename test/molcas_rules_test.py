@@ -92,10 +92,21 @@ def test_rasscf_orb_spec():
 
 def test_rasscf_ci_expansion():
     assert False, "TODO"
+"""
 
 def test_rasscf_module():
+    rule = rasscf.RASSCFModule()
+    parser = Parser(rule)
+    with open(molextract_test_file("styrene.log")) as f:
+        data = f.read()
+    
+    expected_out = {
+    } # yapf:disable
+
+    print(parser.feed(data))
     assert False, "TODO"
 
+"""
 def test_rassi_dipole_strengths():
     assert False, "TODO"
 
