@@ -3,19 +3,12 @@ from argparse import RawTextHelpFormatter
 import json
 import sys
 
-DESCRIPTION = """\
-TODO
+DESCRIPTION_TMPL = """\
+Parse files using the %s. The output of the Rule is dumped as JSON.
 """
-
-RED = "\x1b[31m"
-RESET = "\x1b[0m"
-
-def fatal(string):
-    print(f"{RED}FATAL{RESET}: {string}", file=sys.stderr)
 
 
 class Parser:
-
     def __init__(self, rule):
         self.rule = rule
 
@@ -29,11 +22,13 @@ class Parser:
                 self.rule.process_lines(line)
                 return self.rule.reset()
 
-    def cli(self):
-        parser = argparse.ArgumentParser(description=DESCRIPTION,
+    def cli(self, args=None):
+        description = DESCRIPTION_TMPL % type(self.rule).__name__
+        parser = argparse.ArgumentParser(description=description,
                                          formatter_class=RawTextHelpFormatter)
-        parser.add_argument("file", help=f"the path to the file containing the data")
-        args = parser.parse_args()
+        parser.add_argument("file",
+                            help=f"the path to the file containing the data")
+        args = parser.parse_args(args)
 
         with open(args.file, "r") as f:
             data = f.read()
