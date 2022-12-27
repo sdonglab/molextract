@@ -2,6 +2,7 @@ import pytest
 
 from util import IntRule, WordRule, IntOrWordRule
 
+
 def test_slr_process_lines():
     int_rule = IntRule()
     word_rule = WordRule()
@@ -17,9 +18,10 @@ def test_slr_process_lines():
     for val in "1 2 3".split():
         int_rule.process_lines(val)
         word_rule.process_lines(val)
-    
+
     assert int_rule.reset() == [1, 2, 3]
     assert word_rule.reset() == ["1", "2", "3"]
+
 
 def test_slr_on_end_tag_matched():
     """
@@ -36,10 +38,11 @@ def test_slr_on_end_tag_matched():
     with pytest.raises(ValueError):
         for _ in int_rule:
             pass
-    
+
     # Directly call method
     with pytest.raises(ValueError):
         int_rule.end_tag_matches("end_tag")
+
 
 def test_rlr_process_lines():
     rlr = IntOrWordRule()

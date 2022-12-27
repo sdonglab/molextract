@@ -87,16 +87,14 @@ class RASSCFCiCoeff(Rule):
         self.state.clear()
         return out
 
+
 class RASSCFOrbSpec(Rule):
     TRIGGER = r"\+\+    Orbital specifications:"
     END = r"--"
 
     def __init__(self):
         super().__init__(self.TRIGGER, self.END)
-        self.state = {
-            "active_orbs": None,
-            "num_basis_funcs": None
-        }
+        self.state = {"active_orbs": None, "num_basis_funcs": None}
 
     def feed(self, line):
         # Don't care about next two lines
@@ -108,11 +106,11 @@ class RASSCFOrbSpec(Rule):
             elif "Number of basis functions" in line:
                 self.state["num_basis_funcs"] = int(last)
 
-
     def clear(self):
         tmp = self.state.copy()
         self.state.clear()
         return tmp
+
 
 class RASSCFCIExpansionSpec(Rule):
     TRIGGER = r"\+\+    CI expansion specifications:"
@@ -120,9 +118,7 @@ class RASSCFCIExpansionSpec(Rule):
 
     def __init__(self):
         super().__init__(self.TRIGGER, self.END)
-        self.state = {
-            "num_roots": None
-        }
+        self.state = {"num_roots": None}
 
     def feed(self, line):
         # Don't care about next two lines
@@ -138,11 +134,15 @@ class RASSCFCIExpansionSpec(Rule):
         return tmp
 
 
-
 class RASSCFModule(log.ModuleRule):
-
     def __init__(self):
-        rules = [RASSCFEnergy(), RASSCFCiCoeff(), RASSCFOccupation(), RASSCFOrbSpec(), RASSCFCIExpansionSpec()]
+        rules = [
+            RASSCFEnergy(),
+            RASSCFCiCoeff(),
+            RASSCFOccupation(),
+            RASSCFOrbSpec(),
+            RASSCFCIExpansionSpec()
+        ]
         super().__init__("rasscf", rules)
 
     def clear(self):
@@ -157,4 +157,4 @@ class RASSCFModule(log.ModuleRule):
             root_dict["occupation"] = results[2][i]
             out["data"].append(root_dict)
 
-        return results[3] | results[4] |  out
+        return results[3] | results[4] | out

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='molextract',
-    version='0.5.0',    
+    version='0.5.0',
     description='Parse Molcas/OpenMolcas Log Files',
     url='https://github.com/sdonglab/molextract',
     author='Nithin Chintala',

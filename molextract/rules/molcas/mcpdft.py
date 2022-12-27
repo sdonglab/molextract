@@ -21,6 +21,7 @@ class MCPDFTEnergy(Rule):
         self.state.clear()
         return floats
 
+
 class MCPDFTRefEnergy(Rule):
 
     TRIGGER = r"\s+MCSCF reference energy"
@@ -41,7 +42,6 @@ class MCPDFTRefEnergy(Rule):
 
 
 class MCPDFTModule(log.ModuleRule):
-
     def __init__(self):
         rules = [MCPDFTRefEnergy(), MCPDFTEnergy()]
         super().__init__("mcpdft", rules)

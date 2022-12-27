@@ -1,7 +1,7 @@
 from molextract.rules.abstract import RuleListRule
 
-class ModuleRule(RuleListRule):
 
+class ModuleRule(RuleListRule):
     def __init__(self, name, rules=None, **kwargs):
         start_tag = f"--- Start Module: {name}"
         end_tag = f"--- Stop Module: {name}"
@@ -13,4 +13,7 @@ class LogRule(RuleListRule):
     END_TAG = r"\s+Timing:"
 
     def __init__(self, rules=None, **kwargs):
-        super().__init__(LogRule.START_TAG, LogRule.END_TAG, rules=rules, **kwargs)
+        super().__init__(LogRule.START_TAG,
+                         LogRule.END_TAG,
+                         rules=rules,
+                         **kwargs)

@@ -51,8 +51,10 @@ class Rule:
             self.data.clear()
             return tmp
     """
-
-    def __init__(self, start_tag=r".*", end_tag=r".*", check_only_beginning=True):
+    def __init__(self,
+                 start_tag=r".*",
+                 end_tag=r".*",
+                 check_only_beginning=True):
         """
         Initialize the Rule with the start and end tags
 

@@ -4,6 +4,7 @@ from util import molextract_test_file, IntRule
 
 import pytest
 
+
 def test_module_rule():
     module_rule = log.ModuleRule("test", rules=[IntRule()])
     parser = Parser(module_rule)
@@ -39,6 +40,7 @@ def test_log_rule():
     data = "   This run of MOLCAS\n1\n2\n   OOPS"
     with pytest.raises(ValueError):
         parser.feed(data)
+
 
 """
 def test_mcpdft_energy():

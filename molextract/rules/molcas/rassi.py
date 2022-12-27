@@ -31,7 +31,6 @@ class RASSIDipoleStrengths(me.Rule):
 
 
 class RASSIModule(log.ModuleRule):
-
     def __init__(self):
         rules = [RASSIDipoleStrengths()]
         super().__init__("rassi", rules)

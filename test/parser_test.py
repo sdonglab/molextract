@@ -6,6 +6,7 @@ from util import IntRule
 
 import pytest
 
+
 def test_feed():
     rlr = RuleListRule(start_tag="START", end_tag="END", rules=[IntRule()])
     p = Parser(rlr)
@@ -23,6 +24,7 @@ def test_feed():
     msg = "feed should return None if there is no data to parse"
     assert p.feed("") is None, msg
     assert p.feed("hello world") is None, msg
+
 
 @mock.patch('molextract.parser.Parser.feed', return_value='foo')
 def test_cli(mock_feed, tmp_path):
