@@ -13,6 +13,7 @@ class MCPDFTEnergy(SingleLineRule):
         energy = line.split()[6]
         return float(energy)
 
+
 class MCPDFTRefEnergy(SingleLineRule):
 
     START_TAG = r"\s+MCSCF reference energy"
@@ -24,6 +25,7 @@ class MCPDFTRefEnergy(SingleLineRule):
         energy = line.split()[3]
         return float(energy)
 
+
 class MCPDFTModule(log.ModuleRule):
     def __init__(self):
         rules = [MCPDFTRefEnergy(), MCPDFTEnergy()]
@@ -33,16 +35,9 @@ class MCPDFTModule(log.ModuleRule):
         results = [rule.reset() for rule in self.rules]
         ref_energies, energies = results
         assert len(ref_energies) == len(energies)
-        out = {
-            "module": "mcpdft",
-            "roots": len(ref_energies),
-            "data": []
-        }
+        out = {"module": "mcpdft", "roots": len(ref_energies), "data": []}
         for ref, energy in zip(ref_energies, energies):
-            root_dict = {
-                "mcsf_ref_energy": ref,
-                "total_energy": energy
-            }
+            root_dict = {"mcsf_ref_energy": ref, "total_energy": energy}
             out["data"].append(root_dict)
 
         return out

@@ -1,3 +1,6 @@
+import json
+import textwrap
+
 from molextract.rules.molcas import log, mcpdft, rasscf, rassi
 from molextract.parser import Parser
 from util import molextract_test_file, IntRule
@@ -50,6 +53,7 @@ def test_mcpdft_energy():
     assert not rule.start_tag_matches(data.strip())
     assert rule.process(data) == -348.16265964
 
+
 def test_mcpdft_ref_energy():
     data = "   MCSCF reference energy 42"
     rule = mcpdft.MCPDFTRefEnergy()
@@ -58,15 +62,16 @@ def test_mcpdft_ref_energy():
     assert not rule.start_tag_matches(data.strip())
     assert rule.process(data) == 42
 
+
 def test_mcpdft_module():
     rule = mcpdft.MCPDFTModule()
     parser = Parser(rule)
     with open(molextract_test_file("styrene.log")) as f:
         data = f.read()
-    
+
     expected_out = {
         "module": "mcpdft",
-        "roots": 5, 
+        "roots": 5,
         "data": [
             {"mcsf_ref_energy": -346.75437194, "total_energy": -348.41834879},
             {"mcsf_ref_energy": -346.57995558, "total_energy": -348.23225204},
@@ -76,35 +81,81 @@ def test_mcpdft_module():
         ]
     } # yapf:disable
     assert parser.feed(data) == expected_out
-"""
+
 
 def test_rasscf_energy():
-    assert False, "TODO"
+    parser = Parser(rasscf.RASSCFEnergy())
+    data = "::    RASSCF root number  1 Total energy:   -346.75437194"
+    assert parser.feed(data) == [-346.75437194]
+
 
 def test_rasscf_occupation():
-    assert False, "TODO"
+    parser = Parser(rasscf.RASSCFOccupation())
+    header = "  Natural orbitals and occupation numbers for root  1"
+    occs_1 = "sym 1:   1.980677   1.960803   1.9198"
+    occs_2 = "         1          2          3"
+
+    data = "\n".join([header, occs_1, ' '])
+    assert parser.feed(data) == [[1.980677, 1.960803, 1.9198]]
+
+    data = "\n".join([header, occs_1, occs_2, ' '])
+    assert parser.feed(data) == [[1.980677, 1.960803, 1.9198, 1, 2, 3]]
+
 
 def test_rasscf_ci_coeff():
-    assert False, "TODO"
+    parser = Parser(rasscf.RASSCFCiCoeff())
+    header = "  printout of CI-coefficients larger than  0.05 for root  5"
+    skip_1 = "energy= 123"
+    skip_2 = "conf/sym  1111111111     Coeff  Weight"
+    row_1 = "2  2222ud0000  -0.06272 0.00393"
+    row_2 = "3  2222u0d000   0.14851 0.02206"
+
+    data = "\n".join([header, skip_1, skip_2, row_1, ' '])
+    assert parser.feed(data) == [[[2, "2222ud0000", -0.06272, 0.00393]]]
+
+    data = "\n".join([header, skip_1, skip_2, row_1, row_2, ' '])
+    assert parser.feed(data) == [[[2, "2222ud0000", -0.06272, 0.00393],
+                                  [3, "2222u0d000", 0.14851, 0.02206]]]
+
 
 def test_rasscf_orb_spec():
-    assert False, "TODO"
+    parser = Parser(rasscf.RASSCFOrbSpec())
+    data = textwrap.dedent("""\
+    ++    Orbital specifications:
+    -----
+
+    Active orbitals                           10
+    Foo Bar                               IGNORE
+    Number of basis functions                185
+    --
+    """)
+    assert parser.feed(data) == {"active_orbs": 10, "num_basis_funcs": 185}
+
 
 def test_rasscf_ci_expansion():
-    assert False, "TODO"
-"""
+    parser = Parser(rasscf.RASSCFCIExpansionSpec())
+    data = textwrap.dedent("""\
+    ++    CI expansion specifications:
+      ----------------------------
+ 
+      Number of CSFs                         19404
+      Number of root(s) required                 5
+    --
+    """)
+    assert parser.feed(data) == {"roots": 5}
+
 
 def test_rasscf_module():
     rule = rasscf.RASSCFModule()
     parser = Parser(rule)
     with open(molextract_test_file("styrene.log")) as f:
         data = f.read()
-    
-    expected_out = {
-    } # yapf:disable
 
-    print(parser.feed(data))
-    assert False, "TODO"
+    with open(molextract_test_file("styrene_rasscf.json")) as f:
+        expected_out = json.loads(f.read())
+
+    assert parser.feed(data) == expected_out
+
 
 """
 def test_rassi_dipole_strengths():

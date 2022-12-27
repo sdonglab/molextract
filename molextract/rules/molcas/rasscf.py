@@ -12,7 +12,7 @@ class RASSCFEnergy(SingleLineRule):
 
     def process(self, line):
         return float(line.split()[7])
-    
+
 
 class RASSCFOccupation(Rule):
 
@@ -107,7 +107,7 @@ class RASSCFCIExpansionSpec(Rule):
 
     def __init__(self):
         super().__init__(self.START_TAG, self.END_TAG)
-        self.state = {"num_roots": None}
+        self.state = {"roots": None}
 
     def process_lines(self, start_line):
         # Don't care about next two lines

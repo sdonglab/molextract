@@ -1,9 +1,8 @@
 import molextract as me
-from molextract.rules import abstract, rasscf, mcpdft, rassi
+from molextract.rules.molcas import log, rasscf, mcpdft, rassi
 
-me.DEBUG = True
 rules = [rasscf.RASSCFModule(), mcpdft.MCPDFTModule(), rassi.RASSIModule()]
-log_rule = abstract.LogRule(rules)
+log_rule = log.LogRule(rules)
 
-parser = me.MolcasParser(log_rule)
+parser = me.Parser(log_rule)
 parser.cli()
