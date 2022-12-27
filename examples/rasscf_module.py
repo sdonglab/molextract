@@ -1,6 +1,5 @@
 import molextract as me
-from molextract.rules import rasscf
+from molextract.rules.molcas import rasscf
 
-me.DEBUG = True
-parser = me.MolcasParser(rasscf.RASSCFModule())
+parser = me.Parser(rasscf.RASSCFModule())
 parser.cli()

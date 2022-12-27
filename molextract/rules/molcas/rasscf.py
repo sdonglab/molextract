@@ -1,40 +1,29 @@
-import molextract as me
-from molextract.rules import abstract
+from molextract.rule import Rule
+from molextract.rules.abstract import SingleLineRule
+from molextract.rules.molcas import log
 
 
-class RASSCFEnergy(me.Rule):
+class RASSCFEnergy(SingleLineRule):
 
-    TRIGGER = r"::    RASSCF root number"
-    END = r"^\s+$"
-
-    def __init__(self):
-        super().__init__(self.TRIGGER, self.END)
-        self.state = []
-
-    def energy(self, line):
-        return line.split()[7]
-
-    def feed(self, line):
-        self.state.append(self.energy(line))
-        for line in self:
-            self.state.append(self.energy(line))
-
-    def clear(self):
-        floats = [float(e) for e in self.state]
-        self.state.clear()
-        return floats
-
-
-class RASSCFOccupation(me.Rule):
-
-    TRIGGER = "\s+Natural orbitals and occupation numbers"
-    END = r"^\s+$"
+    START_TAG = "::    RASSCF root number"
 
     def __init__(self):
-        super().__init__(self.TRIGGER, self.END)
+        super().__init__(self.START_TAG)
+
+    def process(self, line):
+        return float(line.split()[7])
+
+
+class RASSCFOccupation(Rule):
+
+    START_TAG = r"\s+Natural orbitals and occupation numbers"
+    END_TAG_TAG = r"^\s+$"
+
+    def __init__(self):
+        super().__init__(self.START_TAG, self.END_TAG_TAG)
         self.state = []
 
-    def feed(self, line):
+    def process_lines(self, start_line):
         occupation = []
         for line in self:
             line = line.strip()
@@ -45,7 +34,7 @@ class RASSCFOccupation(me.Rule):
 
         self.state.append(occupation)
 
-    def clear(self):
+    def reset(self):
         floats = []
         for root in self.state:
             floats.append([float(o) for o in root])
@@ -53,16 +42,16 @@ class RASSCFOccupation(me.Rule):
         return floats
 
 
-class RASSCFCiCoeff(me.Rule):
+class RASSCFCiCoeff(Rule):
 
-    TRIGGER = "\s+ printout of CI-coefficients larger than"
-    END = r"^\s+$"
+    START_TAG = r"\s+ printout of CI-coefficients larger than"
+    END_TAG_TAG = r"^\s+$"
 
     def __init__(self):
-        super().__init__(self.TRIGGER, self.END)
+        super().__init__(self.START_TAG, self.END_TAG_TAG)
         self.state = []
 
-    def feed(self, line):
+    def process_lines(self, start_line):
         # Don't care about next two lines
         self.skip(2)
         coeffs = []
@@ -71,7 +60,7 @@ class RASSCFCiCoeff(me.Rule):
 
         self.state.append(coeffs)
 
-    def clear(self):
+    def reset(self):
         out = []
         for root in self.state:
             coeffs = []
@@ -87,18 +76,16 @@ class RASSCFCiCoeff(me.Rule):
         self.state.clear()
         return out
 
-class RASSCFOrbSpec(me.Rule):
-    TRIGGER = r"\+\+    Orbital specifications:"
-    END = r"--"
+
+class RASSCFOrbSpec(Rule):
+    START_TAG = r"\+\+    Orbital specifications:"
+    END_TAG = "--"
 
     def __init__(self):
-        super().__init__(self.TRIGGER, self.END)
-        self.state = {
-            "active_orbs": None,
-            "num_basis_funcs": None
-        }
+        super().__init__(self.START_TAG, self.END_TAG)
+        self.state = {"active_orbs": None, "num_basis_funcs": None}
 
-    def feed(self, line):
+    def process_lines(self, start_line):
         # Don't care about next two lines
         self.skip(2)
         for line in self:
@@ -108,23 +95,21 @@ class RASSCFOrbSpec(me.Rule):
             elif "Number of basis functions" in line:
                 self.state["num_basis_funcs"] = int(last)
 
-
-    def clear(self):
+    def reset(self):
         tmp = self.state.copy()
         self.state.clear()
         return tmp
 
-class RASSCFCIExpansionSpec(me.Rule):
-    TRIGGER = r"\+\+    CI expansion specifications:"
-    END = r"--"
+
+class RASSCFCIExpansionSpec(Rule):
+    START_TAG = r"\+\+    CI expansion specifications:"
+    END_TAG = r"--"
 
     def __init__(self):
-        super().__init__(self.TRIGGER, self.END)
-        self.state = {
-            "num_roots": None
-        }
+        super().__init__(self.START_TAG, self.END_TAG)
+        self.state = {"roots": None}
 
-    def feed(self, line):
+    def process_lines(self, start_line):
         # Don't care about next two lines
         self.skip(2)
         for line in self:
@@ -132,21 +117,25 @@ class RASSCFCIExpansionSpec(me.Rule):
             if "Number of root(s) required" in line:
                 self.state["roots"] = int(last)
 
-    def clear(self):
+    def reset(self):
         tmp = self.state.copy()
         self.state.clear()
         return tmp
 
 
-
-class RASSCFModule(abstract.ModuleRule):
-
+class RASSCFModule(log.ModuleRule):
     def __init__(self):
-        rules = [RASSCFEnergy(), RASSCFCiCoeff(), RASSCFOccupation(), RASSCFOrbSpec(), RASSCFCIExpansionSpec()]
+        rules = [
+            RASSCFEnergy(),
+            RASSCFCiCoeff(),
+            RASSCFOccupation(),
+            RASSCFOrbSpec(),
+            RASSCFCIExpansionSpec()
+        ]
         super().__init__("rasscf", rules)
 
-    def clear(self):
-        results = [rule.clear() for rule in self.rules]
+    def reset(self):
+        results = [rule.reset() for rule in self.rules]
         out = {}
         out["module"] = "rasscf"
         out["data"] = []
@@ -157,4 +146,4 @@ class RASSCFModule(abstract.ModuleRule):
             root_dict["occupation"] = results[2][i]
             out["data"].append(root_dict)
 
-        return results[3] | results[4] |  out
+        return results[3] | results[4] | out

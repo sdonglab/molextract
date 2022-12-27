@@ -1,6 +1,6 @@
 import molextract as me
-from molextract.rules import rasscf
+from molextract.rules.molcas import rasscf, log
 
-me.DEBUG = True
-parser = me.MolcasParser(rasscf.RASSCFEnergy())
+rlr = log.LogRule(rules=[rasscf.RASSCFEnergy()])
+parser = me.Parser(rlr)
 parser.cli()
