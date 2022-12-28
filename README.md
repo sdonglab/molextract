@@ -30,14 +30,15 @@ expression with some code to execute.
 Back the the `SCF` example before, we could make a Rule that matches the RegEx `:: Total SCF energy`.
 Once that rule matches that line in the Python code we now have access to the String `"::    Total SCF energy <energy>"`
 and then we can do... anything. Most likely we want the energy as an float so we can do something like
-`energy = float(line.split()[4])`. In this example we can say this Rule is `TRIGGERED` by the RegEx `:: Total SCF energy`.
+`energy = float(line.split()[4])`. In this example we can say this Rule's `start_tag` is the RegEx `:: Total SCF energy`.
 
-Sometimes data in OpenMolcas log files span multiple lines so our trigger may be on line 1, but all our data is on line 2-10.
-So we also need a mechanism to know when a rule no longer applies or an `END` tag. This is yet another RegEx that once we
-match a `TRIGGERED` RegEx is constantly checked to see if our Rule is complete.
+Sometimes data in OpenMolcas log files span multiple lines so our `start_tag` may be on line 1, but all our data is on lines 2-10.
+So we also need a mechanism to know when a rule no longer applies or an `end_tag`. This is yet another RegEx that once we
+match a `start_tag` is constantly checked to see if our Rule is complete.
 
 Let's see this high level overview in some of the code. Ignore the method names for now and focus
-on the `TRIGGER` and `END` aspects. This is the `RASSCFOrbSpec` Rule in `rules/rasscf.py`. It's goal is the take the following information
+on the `START_TAG` and `END_TAG` class variables. This is the `RASSCFOrbSpec` rule found [here](https://github.com/sdonglab/molextract/blob/main/molextract/rules/molcas/rasscf.py#L84).
+It's goal is the take the following information
 ```
 ++    Orbital specifications:
       -----------------------
@@ -55,7 +56,7 @@ on the `TRIGGER` and `END` aspects. This is the `RASSCFOrbSpec` Rule in `rules/r
       Number of basis functions                185
 --
 ```
-and make the following dictionary
+and convert it to the following Python dictionary
 ```python
 {
     "active_orbs": 10,
@@ -65,18 +66,15 @@ and make the following dictionary
 
 The code for to that looks like this
 ```python
-class RASSCFOrbSpec(me.Rule):
-    TRIGGER = r"\+\+    Orbital specifications:"
-    END = r"--"
+class RASSCFOrbSpec(Rule):
+    START_TAG = r"\+\+    Orbital specifications:"
+    END_TAG = "--"
 
     def __init__(self):
-        super().__init__(self.TRIGGER, self.END)
-        self.state = {
-            "active_orbs": None,
-            "num_basis_funcs": None
-        }
+        super().__init__(self.START_TAG, self.END_TAG)
+        self.state = {"active_orbs": None, "num_basis_funcs": None}
 
-    def feed(self, line):
+    def process_lines(self, start_line):
         # Don't care about next two lines
         self.skip(2)
         for line in self:
@@ -86,29 +84,34 @@ class RASSCFOrbSpec(me.Rule):
             elif "Number of basis functions" in line:
                 self.state["num_basis_funcs"] = int(last)
 
-
-    def clear(self):
+    def reset(self):
         tmp = self.state.copy()
         self.state.clear()
         return tmp
-
 ```
-First notice how the data itself has very obvious start / end "tags". Namely the data starts
+First notice how the data itself has very obvious start / end tags. Namely the data starts
 with `++    Orbital specifications:` and ends with `--`. These are then precisely our RegExs
-we define for our Rule, see the `TRIGGER` and `END` variables.
+we define for our Rule, see the `START_TAG` and `END_TAG` variables.
 
-The `feed` method will only execute when a line matches `TRIGGER`. Once we
-are executing this code we can iterate through each line following the `TRIGGER` until we
-reach `END`. This is encapsulated in `for line in self`. At this point we know exactly at which
-point in the file we are in and we can proceed to do what we want. In our case we want some
-specific number so we write some standard python string manipulation code.
+The `process_lines` method will handle the actual extraction of data. See the [Parse](#parser)
+section to understand when and where this method is executed. For now you can assume that
+`process_lines` is only called when we are reading a log file and we find a line that matches
+`START_TAG`.
 
-The `clear` method is a mechanism to allow the re-use of Rule between multiple files as there
+Once `process_lines` is called we are given access to the line that matches the `START_TAG` namely
+the argument `start_line`. We are now also able to iterate through the rest of the log file until
+we see a line that matches the `END_TAG`. This iteration is encapsulated in the python code
+`for line in self`, i.e. the for loop will end once we reach a line matching `END_TAG`. Based on
+these control flows, within the for loop we know exactly where we are in the log file and are free
+to parse as we please. In our case we want some specific number so we write some standard python string
+manipulation code.
+
+The `reset` method is a mechanism to allow the re-use of a Rule between multiple files as there
 may be some state that needs to be reset. Understanding this mechanism is ancillary to the core
 concept of Rules in `molextract`.
 
 This was a simple rule. `molextract` allows us to nest rules so we can build complex rules that
-describe an entire module or an entire calculation. See `examples/excited_state.py` and try to
+describe an entire module or an entire calculation. See [examples/excited_state.py](https://github.com/sdonglab/molextract/blob/main/examples/excited_state.py) and try to
 follow the chain as described below.
 ```
 - LogRule
@@ -125,9 +128,36 @@ follow the chain as described below.
     * RASSIDipoleStrengths
 ```
 
+## Parser
+In the [Rules](#rules) section we made some assumptions about when and where `process_lines` is called. The [Parser](https://github.com/sdonglab/molextract/blob/main/molextract/parser.py) class
+explicitly defines these mechanism.
+
+In the `Parser` class we have a method `feed`
+```python
+    def feed(self, data, delim='\n'):
+        split = data.split(delim)
+        split_iter = iter(split)
+        self.rule.set_iter(split_iter)
+
+        for line in split_iter:
+            if self.rule.start_tag_matches(line):
+                self.rule.process_lines(line)
+                return self.rule.reset()
+```
+We do the following in this method
+1. Setup the internal iterator for the rule by splitting the data
+2. Iterate through the same iterator and only when we find line that matches the `start_tag`
+do we execute `process_lines`
+3. Once the rule is finished executing we immediately return with the data as returned in
+`reset`
+
+Here we have explicitly defined when and where to call `process_lines`. It is up to the user
+to manage when and were to execute this method, but the `Parser` class should suffice for almost
+all use cases.
 
 ## Installation
-`molextract` has no external dependencies. Simply clone this repository and add that location
+### Manual Installation
+`molextract` has no external dependencies. You can simply clone this repository and add that location
 to your `$PYTHONPATH`
 
 For example if you want to put this in `/home/$USER/python-packages` do the following.
@@ -143,14 +173,21 @@ Then in your `~/.bashrc` or other runtime configuration file, add the following 
 export PYTHONPATH=$PYTHONPATH:/home/$USER/python-packages
 ```
 
-You are free to put this package anywhere you would like simply just replace `/home/$USER/python-packages`
-with any other path you want.
+
+### Local `pip install`
+
+You may also install `molextract` locally via `setuptools`. Clone the repository and run within it
+```bash
+pip install .
+```
+
+### Remote `pip install`
+Currently this package is not yet available on `pypi`
 
 ## Examples
 See the `examples/` directory
 
 ## In Progress Development
-- Extracting information from an `END` Tag. See https://github.com/sdonglab/molextract/issues/1
 - Right now internally rules can only be based on single lines. I don't anticipate changing this
 so there wouldn't be an easy way to make a multi-line trigger, though it could be done with some
 overhead logic.

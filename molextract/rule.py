@@ -5,7 +5,7 @@ class Rule:
     """
     A Rule is the core mechanism used to parse data. It is based on the assumption
     that the data you want to parse has relevant information is between hallmark
-    start and end tag. For example take the text file below
+    start and end tags. For example take the text file below
 
         BEGIN DATA
         1.4 3 2
@@ -14,12 +14,12 @@ class Rule:
         END DATA
 
     Here it is clear that the data lays between "BEGIN DATA" and "END DATA". A
-    Rule explicitly defines these rules via RegularExpression. So describe the
+    Rule explicitly defines these tags via RegularExpressions. So to describe the
     above data we can have a rule as follows:
 
         class TestRule(Rule):
 
-            def __init__():
+            def __init__(self):
                 super().__init__("BEGIN DATA", "END DATA")
 
     To set the the data this rule should parse we call the `set_iter` method:
@@ -39,8 +39,8 @@ class Rule:
                 nums = [float(num) for num in line.split()]
                 self.data.append(nums)
 
-    The rule will only iterate though the iterator until it find a string that
-    matches the defined end_tag
+    It is up to the caller to only call a Rule's `process_lines` method when
+    a line in the iterator matches "BEGIN DATA".
 
     To finally get access to the parsed data you should define the `reset` method
     to reset any internal state and return the parsed data. The goal of this method is
@@ -124,7 +124,7 @@ class Rule:
                 # Do something with line...
         
         It is recommended that any data parsed be stored within this rule
-        to be later retrieved.
+        to be later retrieved via `reset`.
         
         NOTE: It is up to the caller to only call this method when a line
         matches this rule's start_tag. It is also up to the caller to pass
