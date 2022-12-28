@@ -27,6 +27,10 @@ class RASSCFOccupation(Rule):
         occupation = []
         for line in self:
             line = line.strip()
+            # Sometimes the next line after the occupations are done
+            # printing will be a warning instead of white space
+            if line.startswith("Warning!"):
+                continue
             if line.startswith("sym"):
                 occupation.extend(line.split()[2:])
             else:

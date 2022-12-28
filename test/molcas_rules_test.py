@@ -94,11 +94,15 @@ def test_rasscf_occupation():
     header = "  Natural orbitals and occupation numbers for root  1"
     occs_1 = "sym 1:   1.980677   1.960803   1.9198"
     occs_2 = "         1          2          3"
+    warning = "Warning! The number of..."
 
     data = "\n".join([header, occs_1, ' '])
     assert parser.feed(data) == [[1.980677, 1.960803, 1.9198]]
 
     data = "\n".join([header, occs_1, occs_2, ' '])
+    assert parser.feed(data) == [[1.980677, 1.960803, 1.9198, 1, 2, 3]]
+
+    data = "\n".join([header, occs_1, occs_2, warning, ' '])
     assert parser.feed(data) == [[1.980677, 1.960803, 1.9198, 1, 2, 3]]
 
 
