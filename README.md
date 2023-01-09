@@ -111,8 +111,8 @@ may be some state that needs to be reset. Understanding this mechanism is ancill
 concept of Rules in `molextract`.
 
 This was a simple rule. `molextract` allows us to nest rules so we can build complex rules that
-describe an entire module or an entire calculation. See [examples/excited_state.py](https://github.com/sdonglab/molextract/blob/main/examples/excited_state.py) and try to
-follow the chain as described below.
+describe an entire module or an entire calculation. See [examples/excited_state.py](https://github.com/sdonglab/molextract/blob/main/examples/excited_state.py)
+and try to follow the chain as described below.
 ```
 - LogRule
   > RASSCFModule
@@ -129,8 +129,8 @@ follow the chain as described below.
 ```
 
 ## Parser
-In the [Rules](#rules) section we made some assumptions about when and where `process_lines` is called. The [Parser](https://github.com/sdonglab/molextract/blob/main/molextract/parser.py) class
-explicitly defines these mechanism.
+In the [Rules](#rules) section we made some assumptions about when and where `process_lines` is called. The [Parser](https://github.com/sdonglab/molextract/blob/main/molextract/parser.py)
+class explicitly defines these mechanism.
 
 In the `Parser` class we have a method `feed`
 ```python
@@ -185,10 +185,5 @@ pip install .
 Currently this package is not yet available on `pypi`
 
 ## Examples
-See the `examples/` directory
-
-## In Progress Development
-- Right now internally rules can only be based on single lines. I don't anticipate changing this
-so there wouldn't be an easy way to make a multi-line trigger, though it could be done with some
-overhead logic.
-
+See the `examples/` directory. You can run these scripts with the files found in the
+`test/test_files` directory.

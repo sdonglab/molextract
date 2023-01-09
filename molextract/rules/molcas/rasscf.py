@@ -150,4 +150,4 @@ class RASSCFModule(log.ModuleRule):
             root_dict["occupation"] = results[2][i]
             out["data"].append(root_dict)
 
-        return results[3] | results[4] | out
+        return {**results[3], **results[4], **out}
