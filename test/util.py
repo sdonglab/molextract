@@ -5,7 +5,7 @@ from molextract.rules.abstract import RuleListRule
 from molextract.rules.abstract import SingleLineRule
 
 MOLEXTRACT_MODULE_DIR = pathlib.Path(molextract.__file__).parent
-TEST_FILE_DIR = MOLEXTRACT_MODULE_DIR.parent / 'test_files'
+TEST_FILE_DIR = MOLEXTRACT_MODULE_DIR.parent / 'test' / 'test_files'
 
 
 def molextract_test_file(name) -> pathlib.Path:
