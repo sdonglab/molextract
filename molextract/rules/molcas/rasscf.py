@@ -101,7 +101,7 @@ class RASSCFOrbSpec(Rule):
 
     def reset(self):
         tmp = self.state.copy()
-        self.state.clear()
+        self.state = {"active_orbs": None, "num_basis_funcs": None}
         return tmp
 
 
@@ -123,7 +123,7 @@ class RASSCFCIExpansionSpec(Rule):
 
     def reset(self):
         tmp = self.state.copy()
-        self.state.clear()
+        self.state = {"roots": None}
         return tmp
 
 

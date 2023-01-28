@@ -1,7 +1,7 @@
 import json
 import textwrap
 
-from molextract.rules.molcas import log, mcpdft, rasscf, rassi
+from molextract.rules.molcas import log, mcpdft, rasscf, rassi, general
 from molextract.parser import Parser
 from util import molextract_test_file, IntRule
 
@@ -211,3 +211,50 @@ def test_rassi_module():
         "to": 3,
         "osc_strength": 5.3
     }]]
+
+
+def test_mol_prop():
+    class RASSCFMolProps(log.ModuleRule):
+        def __init__(self):
+            super().__init__("rasscf", [general.MolProps()])
+
+    parser = Parser(RASSCFMolProps())
+    with open(molextract_test_file("styrene.log")) as f:
+        data = f.read()
+    assert parser.feed(data) == [
+        [
+            {"dipole": {"x": -1.9811E-02, "y": -1.9202E-01, "z": -9.7237E-02, "total": 2.1615E-01}},
+            {"dipole": {"x": -1.6082E-01, "y": -2.4625E-01, "z": -1.0840E-01, "total": 3.1346E-01}},
+            {"dipole": {"x": 7.1261E-01, "y": -2.4658E-02, "z": -3.6278E-02, "total": 7.1395E-01}},
+            {"dipole": {"x": -3.4706E-01, "y": -3.2306E-01, "z": -1.9238E-01, "total": 5.1169E-01}},
+            {"dipole": {"x": 6.4402E-01, "y": -2.4521E-01, "z": -8.9307E-03, "total": 6.8918E-01}},
+        ]
+    ] # yapf: disable
+
+    parser = Parser(general.MolProps())
+    data = textwrap.dedent("""\
+    ++    Molecular properties:
+        ---------------------
+
+        Charge (e):
+                        =   -0.0000
+        Dipole Moment (Debye):
+        Origin of the operator (Ang)=    0.0000    0.0000    0.0000
+                    X= -3.4706E-01               Y= -3.2306E-01               Z= -1.9238E-01           Total=  5.1169E-01
+        Quadrupole Moment (Debye*Ang):
+        Origin of the operator (Ang)=   -0.0390    0.0091    0.0035
+                    XX= -5.0058E+01              XY= -8.7017E-01              XZ= -2.3833E-01              YY= -5.0903E+01
+                    YZ= -6.5794E-01              ZZ= -5.8162E+01
+        In traceless form (Debye*Ang)
+                    XX=  4.4750E+00              XY= -1.3053E+00              XZ= -3.5749E-01              YY=  3.2066E+00
+                    YZ= -9.8691E-01              ZZ= -7.6816E+00
+    --
+    """)
+    assert parser.feed(data) == [{
+        "dipole": {
+            "x": -3.4706E-01,
+            "y": -3.2306E-01,
+            "z": -1.9238E-01,
+            "total": 5.1169E-01
+        }
+    }]
