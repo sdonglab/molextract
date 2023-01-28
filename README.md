@@ -3,10 +3,12 @@ A rule-based parser for Molcas/OpenMolcas log files to extract and transform any
 found in a log file.
 
 Molextract provides a more modular approach to extracting information from log files and
-abstracts out similar control flow seen in many scripts.
+abstracts out similar control flow seen in many scripts. The initial motivation to develop
+molextract came from wanting to centralize multiple bash scripts that used `grep`, `awk` and `sed`
+into one Python API.
 
 Molextract is abstract enough that it really isn't specific to Molcas/OpenMolcas log files.
-Any file that has certain start / end markers can use the same infrastructure.
+Any file that has certain start / end markers woudl be suitable to use the same infrastructure.
 
 ## High Level Overview
 Some information is easily extracted from OpenMolcas log files. For example the `Total SCF energy`
@@ -27,9 +29,9 @@ data is all on the user.
 A core concept in `Lex` is that of "Rules". A Rule is simply something that associates a regular
 expression with some code to execute.
 
-Back the the `SCF` example before, we could make a Rule that matches the RegEx `:: Total SCF energy`.
+Back to the `SCF` example before, we could make a Rule that matches the RegEx `:: Total SCF energy`.
 Once that rule matches that line in the Python code we now have access to the String `"::    Total SCF energy <energy>"`
-and then we can do... anything. Most likely we want the energy as an float so we can do something like
+and then we can do... anything. Most likely we want the energy as a float so we can do something like
 `energy = float(line.split()[4])`. In this example we can say this Rule's `start_tag` is the RegEx `:: Total SCF energy`.
 
 Sometimes data in OpenMolcas log files span multiple lines so our `start_tag` may be on line 1, but all our data is on lines 2-10.
@@ -86,7 +88,7 @@ class RASSCFOrbSpec(Rule):
 
     def reset(self):
         tmp = self.state.copy()
-        self.state.clear()
+        self.state = {"active_orbs": None, "num_basis_funcs": None}
         return tmp
 ```
 First notice how the data itself has very obvious start / end tags. Namely the data starts
@@ -146,13 +148,13 @@ In the `Parser` class we have a method `feed`
 ```
 We do the following in this method
 1. Setup the internal iterator for the rule by splitting the data
-2. Iterate through the same iterator and only when we find line that matches the `start_tag`
+2. Iterate through the same iterator and only when we find the line that matches `start_tag`
 do we execute `process_lines`
 3. Once the rule is finished executing we immediately return with the data as returned in
 `reset`
 
 Here we have explicitly defined when and where to call `process_lines`. It is up to the user
-to manage when and were to execute this method, but the `Parser` class should suffice for almost
+to manage when and where to execute this method, but the `Parser` class should suffice for almost
 all use cases.
 
 ## Installation
