@@ -37,6 +37,7 @@ class RuleListRule(Rule):
         self.rules = rules
 
     def set_iter(self, iterator):
+        print("YO")
         super().set_iter(iterator)
         for rule in self.rules:
             rule.set_iter(iterator)
