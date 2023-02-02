@@ -138,7 +138,6 @@ class RASSCFCartesianCoords(Rule):
     def process_lines(self, start_line):
         self.skip(3)
         for line in self:
-            print(line)
             line = line.strip()
             if line.startswith('-'):
                 continue
