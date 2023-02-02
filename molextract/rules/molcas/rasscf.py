@@ -127,6 +127,33 @@ class RASSCFCIExpansionSpec(Rule):
         return tmp
 
 
+class RASSCFCartesianCoords(Rule):
+    START_TAG = r"\s+Cartesian coordinates in Angstrom:"
+    END_TAG = r"\s+Nuclear repulsion energy"
+
+    def __init__(self):
+        super().__init__(self.START_TAG, self.END_TAG)
+        self.state = []
+
+    def process_lines(self, start_line):
+        self.skip(3)
+        for line in self:
+            print(line)
+            line = line.strip()
+            if line.startswith('-'):
+                continue
+
+            split = line.split()
+            label = split[1]
+            floats = [float(val) for val in split[2:]]
+            self.state.append((label, *floats))
+
+    def reset(self):
+        tmp = self.state.copy()
+        self.state.clear()
+        return tmp
+
+
 class RASSCFModule(log.ModuleRule):
     def __init__(self):
         rules = [
