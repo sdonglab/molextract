@@ -172,7 +172,7 @@ git clone https://github.com/sdonglab/molextract.git
 
 Then in your `~/.bashrc` or other runtime configuration file, add the following line
 ```bash
-export PYTHONPATH=$PYTHONPATH:/home/$USER/python-packages
+export PYTHONPATH=$PYTHONPATH:/home/$USER/python-packages/molextract
 ```
 
 
