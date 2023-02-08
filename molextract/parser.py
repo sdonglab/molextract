@@ -1,7 +1,6 @@
 import argparse
 from argparse import RawTextHelpFormatter
 import json
-import sys
 
 DESCRIPTION_TMPL = """\
 Parse files using the %s rule. The output of the rule is dumped as JSON.

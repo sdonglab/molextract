@@ -177,7 +177,6 @@ export PYTHONPATH=$PYTHONPATH:/home/$USER/python-packages/molextract
 
 
 ### Local `pip install`
-
 You may also install `molextract` locally via `setuptools`. Clone the repository and run within it
 ```bash
 pip install .
@@ -189,3 +188,7 @@ Currently this package is not yet available on `pypi`
 ## Examples
 See the `examples/` directory. You can run these scripts with the files found in the
 `test/test_files` directory.
+
+## Testing
+To run the unit tests you will need `pytest` installed in your current python environment. Then
+simply run `pytest` within this repository.

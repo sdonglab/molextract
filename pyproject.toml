@@ -5,10 +5,19 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "molextract"
 authors = [{name = "Nithin Chintala", email = "chintala.v@northeastern.edu"}]
-description = "Parse Molcas/OpenMolcas Log Files"
+description = "Parse Molcas/OpenMolcas log files in a modular way"
 readme = "README.md"
 requires-python = ">=3.7"
 license = {file = "LICENSE"}
+keywords = [
+    "chemistry",
+    "computational-chemistry",
+    "log-files",
+    "parsing",
+    "parser",
+    "molcas",
+    "open-molcas"
+]
 classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
@@ -16,15 +25,8 @@ classifiers = [
 ]
 dynamic = ["version"]
 
+[tool.setuptools.dynamic]
+version = {attr = "molextract.__version__"}
+
 [project.urls]
-Homepage = "https://github.com/TODO"
-
-[project.optional-dependencies]
-pdf = ["ReportLab>=1.2", "RXP"]
-rest = ["docutils>=0.3", "pack ==1.1, ==1.3"]
-
-[project.scripts]
-my-script = "my_package.module:function"
-
-# ... other project metadata fields as specified in:
-#     https://packaging.python.org/en/latest/specifications/declaring-project-metadata
+Homepage = "https://github.com/sdonglab/molextract"
