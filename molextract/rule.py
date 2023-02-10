@@ -1,4 +1,6 @@
 import re
+from molextract import debug
+from molextract.debug import Color
 
 
 class Rule:
@@ -74,6 +76,13 @@ class Rule:
         self._check_only_beginning = check_only_beginning
         self._iterator = None
 
+    def rule_id(self):
+        """
+        Get the name of the current Rule, default behavior is the name of the
+        class. Useful for debugging / logging purposes.
+        """
+        return type(self).__name__
+
     def set_iter(self, iterator):
         """
         Set the internal iterator used to read lines from
@@ -92,7 +101,11 @@ class Rule:
         :return: whether the match was successful
         :rtype: bool
         """
-        return self._match(self._start_tag, line)
+        matches = self._match(self._start_tag, line)
+        if matches:
+            debug.log_start_tag(line, self.rule_id())
+
+        return matches
 
     def end_tag_matches(self, line):
         """
@@ -103,8 +116,11 @@ class Rule:
         :return: whether the match was successful
         :rtype: bool
         """
+        matches = self._match(self._end_tag, line)
+        if matches:
+            debug.log_end_tag(line, self.rule_id())
 
-        return self._match(self._end_tag, line)
+        return matches
 
     def _match(self, compiled_re, line):
         if self._check_only_beginning:
