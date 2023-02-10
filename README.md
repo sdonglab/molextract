@@ -8,7 +8,7 @@ molextract came from wanting to centralize multiple bash scripts that used `grep
 into one Python API.
 
 Molextract is abstract enough that it really isn't specific to Molcas/OpenMolcas log files.
-Any file that has certain start / end markers woudl be suitable to use the same infrastructure.
+Any file that has certain start / end markers would be suitable to use the same infrastructure.
 
 ## High Level Overview
 Some information is easily extracted from OpenMolcas log files. For example the `Total SCF energy`
@@ -22,7 +22,7 @@ Furthermore, `molextract` is designed to simply extract information, so that any
 modify / change / transform this data in any way fit.
 
 ### Rules
-The design of `molextract` is meant to mimic that of `Lex`, a lexical analyzer. So, `molextract`
+The design of `molextract` is meant to mimic that of [Lex](https://en.wikipedia.org/wiki/Lex_(software)), a lexical analyzer. So, `molextract`
 is built to allow lexing to be easy for the user, but all the parsing or giving meaning to the
 data is all on the user.
 
