@@ -185,7 +185,7 @@ pip install .
 ```
 
 ### Remote `pip install`
-Do get the latest release you may run `pip install molextract`
+You can install the latest official release on PyPi with `pip install molextract`
 
 ## Examples
 See the `examples/` directory. You can run these scripts with the files found in the
