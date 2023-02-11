@@ -1,4 +1,6 @@
 # molextract
+[![PyPI version](https://img.shields.io/pypi/v/molextract.svg)](https://pypi.python.org/pypi/molextract)
+
 A rule-based parser for Molcas/OpenMolcas log files to extract and transform any data
 found in a log file.
 
@@ -183,7 +185,7 @@ pip install .
 ```
 
 ### Remote `pip install`
-Currently this package is not yet available on `pypi`
+Do get the latest release you may run `pip install molextract`
 
 ## Examples
 See the `examples/` directory. You can run these scripts with the files found in the
