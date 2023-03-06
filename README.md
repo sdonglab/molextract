@@ -1,4 +1,5 @@
 # molextract
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7700454.svg)](https://doi.org/10.5281/zenodo.7700454)
 [![PyPI version](https://img.shields.io/pypi/v/molextract.svg)](https://pypi.python.org/pypi/molextract)
 
 A rule-based parser for Molcas/OpenMolcas log files to extract and transform any data
