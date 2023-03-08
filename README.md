@@ -1,16 +1,16 @@
-# molextract
+# MolExtract
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7700454.svg)](https://doi.org/10.5281/zenodo.7700454)
 [![PyPI version](https://img.shields.io/pypi/v/molextract.svg)](https://pypi.python.org/pypi/molextract)
 
 A rule-based parser for Molcas/OpenMolcas log files to extract and transform any data
 found in a log file.
 
-Molextract provides a more modular approach to extracting information from log files and
+MolExtract provides a more modular approach to extracting information from log files and
 abstracts out similar control flow seen in many scripts. The initial motivation to develop
-molextract came from wanting to centralize multiple bash scripts that used `grep`, `awk` and `sed`
+MolExtract came from wanting to centralize multiple bash scripts that used `grep`, `awk` and `sed`
 into one Python API.
 
-Molextract is abstract enough that it really isn't specific to Molcas/OpenMolcas log files.
+MolExtract is abstract enough that it really isn't specific to Molcas/OpenMolcas log files.
 Any file that has certain start / end markers would be suitable to use the same infrastructure.
 
 ## High Level Overview
