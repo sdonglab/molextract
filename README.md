@@ -18,14 +18,14 @@ Some information is easily extracted from OpenMolcas log files. For example the 
 in the log file is always printed prefixed as `::    Total SCF energy <energy>`. Other information
 is prefixed by various different "tags" or markers of this information.
 
-The goal of `molextract` is to create a standard and modular way to extract this information so
+The goal of MolExtract is to create a standard and modular way to extract this information so
 as to avoid many scripts that extract different information each in slightly different ways.
 
-Furthermore, `molextract` is designed to simply extract information, so that any application can
+Furthermore, MolExtract is designed to simply extract information, so that any application can
 modify / change / transform this data in any way fit.
 
 ### Rules
-The design of `molextract` is meant to mimic that of [Lex](https://en.wikipedia.org/wiki/Lex_(software)), a lexical analyzer. So, `molextract`
+The design of MolExtract is meant to mimic that of [Lex](https://en.wikipedia.org/wiki/Lex_(software)), a lexical analyzer. So, MolExtract
 is built to allow lexing to be easy for the user, but all the parsing or giving meaning to the
 data is all on the user.
 
@@ -113,9 +113,9 @@ manipulation code.
 
 The `reset` method is a mechanism to allow the re-use of a Rule between multiple files as there
 may be some state that needs to be reset. Understanding this mechanism is ancillary to the core
-concept of Rules in `molextract`.
+concept of Rules in MolExtract.
 
-This was a simple rule. `molextract` allows us to nest rules so we can build complex rules that
+This was a simple rule. MolExtract allows us to nest rules so we can build complex rules that
 describe an entire module or an entire calculation. See [examples/excited_state.py](https://github.com/sdonglab/molextract/blob/main/examples/excited_state.py)
 and try to follow the chain as described below.
 ```
@@ -162,25 +162,25 @@ all use cases.
 
 ## Installation
 ### Manual Installation
-`molextract` has no external dependencies. You can simply clone this repository and add that location
+MolExtract has no external dependencies. You can simply clone this repository and add that location
 to your `$PYTHONPATH`
 
-For example if you want to put this in `/home/$USER/python-packages` do the following.
+For example if you want to put this in `$HOME/python-packages` do the following.
 
 ```bash
-mkdir -p /home/$USER/python-packages
-cd /home/$USER/python-packages
+mkdir -p $HOME/python-packages
+cd $HOME/python-packages
 git clone https://github.com/sdonglab/molextract.git
 ```
 
-Then in your `~/.bashrc` or other runtime configuration file, add the following line
+Then in your `$HOME/.bashrc` or other runtime configuration file, add the following line
 ```bash
-export PYTHONPATH=$PYTHONPATH:/home/$USER/python-packages/molextract
+export PYTHONPATH=$PYTHONPATH:$HOME/python-packages/molextract
 ```
 
 
 ### Local `pip install`
-You may also install `molextract` locally via `setuptools`. Clone the repository and run within it
+You may also install MolExtract locally via `setuptools`. Clone the repository and run within it
 ```bash
 pip install .
 ```
