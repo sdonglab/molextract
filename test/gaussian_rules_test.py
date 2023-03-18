@@ -1,5 +1,4 @@
 import json
-import textwrap
 
 from molextract.rules.gaussian import log, tddft, general
 from molextract.parser import Parser
