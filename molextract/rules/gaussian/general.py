@@ -1,6 +1,6 @@
 """
-Rule that apply to multiple Gaussian calculations and are not unique should be written
-here
+Rule that apply to multiple Gaussian calculations and are not unique should be
+written here
 """
 
 from molextract.rule import Rule

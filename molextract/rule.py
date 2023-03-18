@@ -5,9 +5,9 @@ from typing import Iterator, Pattern, Any
 
 class Rule:
     """
-    A Rule is the core mechanism used to parse data. It is based on the assumption
-    that the data you want to parse has relevant information is between hallmark
-    start and end tags. For example take the text file below
+    A Rule is the core mechanism used to parse data. It is based on the
+    assumption that the data you want to parse has relevant information is
+    between hallmark start and end tags. For example take the text file below
 
         BEGIN DATA
         1.4 3 2
@@ -16,8 +16,8 @@ class Rule:
         END DATA
 
     Here it is clear that the data lays between "BEGIN DATA" and "END DATA". A
-    Rule explicitly defines these tags via RegularExpressions. So to describe the
-    above data we can have a rule as follows:
+    Rule explicitly defines these tags via RegularExpressions. So to describe
+    the above data we can have a rule as follows:
 
         class TestRule(Rule):
 
@@ -44,9 +44,9 @@ class Rule:
     It is up to the caller to only call a Rule's `process_lines` method when
     a line in the iterator matches "BEGIN DATA".
 
-    To finally get access to the parsed data you should define the `reset` method
-    to reset any internal state and return the parsed data. The goal of this method is
-    to allow the re-use of instances of Rule.
+    To finally get access to the parsed data you should define the `reset`
+    method to reset any internal state and return the parsed data. The goal
+    of this method is to allow the re-use of instances of Rule.
 
         def reset(self):
             tmp = self.data.copy()
@@ -60,13 +60,13 @@ class Rule:
         """
         Initialize the Rule with the start and end tags
 
-        :param start_tag: The regular expression that defines when to begin parsing,
-            defaults to r".*"
-        :param end_tag: the regular expression that defines when to stop parsing
-            defaults to r".*"
-        :param check_only_beginning: whether the start_tag and end_tag should only
-            attempt to match at the start of the string as opposed to match anywhere
-            in the string, defaults to True
+        :param start_tag: The regular expression that defines when to begin
+            parsing, defaults to r".*"
+        :param end_tag: the regular expression that defines when to stop
+            parsing defaults to r".*"
+        :param check_only_beginning: whether the start_tag and end_tag should
+            only attempt to match at the start of the string as opposed to
+            match anywhere in the string, defaults to True
         """
         self._start_tag = re.compile(start_tag)
         self._end_tag = re.compile(end_tag)
@@ -84,7 +84,7 @@ class Rule:
         """
         Set the internal iterator used to read lines from
 
-        :param iterator: the iterator 
+        :param iterator: the iterator
         """
         self._iterator = iterator
 
@@ -130,10 +130,10 @@ class Rule:
 
             for line in self:
                 # Do something with line...
-        
+
         It is recommended that any data parsed be stored within this rule
         to be later retrieved via `reset`.
-        
+
         NOTE: It is up to the caller to only call this method when a line
         matches this rule's start_tag. It is also up to the caller to pass
         in that matching line to this method

@@ -1,6 +1,6 @@
 """
-Rule that apply to multiple MolCAS modules and are not unique should be written
-here
+Rule that apply to multiple MolCAS modules and are not unique should be
+written here
 """
 from molextract.rule import Rule
 

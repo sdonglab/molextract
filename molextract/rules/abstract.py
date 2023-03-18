@@ -56,9 +56,10 @@ class SingleLineRule(Rule):
     """
     A SingleLineRule is a rule that is meant to execute only a single line.
     That is the `start_tag` and `end_tag` are the same line, and the data to
-    extract out is also on the same line. This class provides an easier abstraction
-    to work with these kinds of scenarios. By default this class will store extracted
-    data in a list that is returned upon `reset`. Take the following data
+    extract out is also on the same line. This class provides an easier
+    abstraction to work with these kinds of scenarios. By default this class
+    will store extracted data in a list that is returned upon `reset`. Take
+    the following data
 
         This data is only on a single line: 42
 
@@ -75,8 +76,8 @@ class SingleLineRule(Rule):
         parser = Parser(TestRule())
         assert parser.feed(data) == [42]
 
-    Because these rules are meant to only execute on one line, any use of the iterator
-    will result in an error.
+    Because these rules are meant to only execute on one line, any use of the
+    iterator will result in an error.
     """
     def __init__(self, regex):
         """
