@@ -1,6 +1,6 @@
 import re
 from molextract import debug
-from molextract.debug import Color
+from typing import Iterator, Pattern, Any
 
 
 class Rule:
@@ -54,52 +54,46 @@ class Rule:
             return tmp
     """
     def __init__(self,
-                 start_tag=r".*",
-                 end_tag=r".*",
-                 check_only_beginning=True):
+                 start_tag: str = r".*",
+                 end_tag: str = r".*",
+                 check_only_beginning: bool = True):
         """
         Initialize the Rule with the start and end tags
 
         :param start_tag: The regular expression that defines when to begin parsing,
             defaults to r".*"
-        :type start_tag: str
         :param end_tag: the regular expression that defines when to stop parsing
             defaults to r".*"
-        :type end_tag: str
         :param check_only_beginning: whether the start_tag and end_tag should only
             attempt to match at the start of the string as opposed to match anywhere
             in the string, defaults to True
-        :type check_only_beginning: bool
         """
         self._start_tag = re.compile(start_tag)
         self._end_tag = re.compile(end_tag)
         self._check_only_beginning = check_only_beginning
-        self._iterator = None
+        self._iterator: Iterator[str] = iter([])
 
-    def rule_id(self):
+    def rule_id(self) -> str:
         """
         Get the name of the current Rule, default behavior is the name of the
         class. Useful for debugging / logging purposes.
         """
         return type(self).__name__
 
-    def set_iter(self, iterator):
+    def set_iter(self, iterator: Iterator[str]):
         """
         Set the internal iterator used to read lines from
 
         :param iterator: the iterator 
-        :type iterator: Iterator[str]
         """
         self._iterator = iterator
 
-    def start_tag_matches(self, line):
+    def start_tag_matches(self, line: str) -> bool:
         """
         Whether this rule's start_tag matches the given line
 
         :param line: the string to match against
-        :type line: str
         :return: whether the match was successful
-        :rtype: bool
         """
         matches = self._match(self._start_tag, line)
         if matches:
@@ -107,14 +101,12 @@ class Rule:
 
         return matches
 
-    def end_tag_matches(self, line):
+    def end_tag_matches(self, line: str) -> bool:
         """
         Whether this rule's end_tag matches the given line
 
         :param line: the string to match against
-        :type line: str
         :return: whether the match was successful
-        :rtype: bool
         """
         matches = self._match(self._end_tag, line)
         if matches:
@@ -122,7 +114,7 @@ class Rule:
 
         return matches
 
-    def _match(self, compiled_re, line):
+    def _match(self, compiled_re: Pattern, line: str) -> bool:
         if self._check_only_beginning:
             match = compiled_re.match(line)
         else:
@@ -130,7 +122,7 @@ class Rule:
 
         return match is not None
 
-    def process_lines(self, start_line):
+    def process_lines(self, start_line: str):
         """
         Do the main parsing this rule is responsible for. Within this
         method the following code should represent reading lines between
@@ -147,11 +139,10 @@ class Rule:
         in that matching line to this method
 
         :param start_line: the line that matched this rule's start_tag
-        :type start_line: str
         """
         raise NotImplementedError
 
-    def on_end_tag_matched(self, end_line):
+    def on_end_tag_matched(self, end_line: str):
         """
         When iterating through this rule, this callback is ran whenever
         a line matches this rule's end_tag
@@ -160,33 +151,30 @@ class Rule:
         is only ran once unless explicitly called
 
         :param end_line: the line that matched this rule's end_tag
-        :type end_line: str
         """
         pass
 
-    def reset(self):
+    def reset(self) -> Any:
         """
         Reset any internal state and return the final parsed data.
 
         :return: the final parsed data for this rule
-        :rtype: Any
         """
         raise NotImplementedError
 
-    def skip(self, n):
+    def skip(self, n: int):
         """
         Skip the following n lines by incrementing the iterator
 
         :param n: how many lines to skip
-        :type n: int
         """
         for _ in range(n):
             next(self._iterator)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         return self
 
-    def __next__(self):
+    def __next__(self) -> str:
         try:
             line = next(self._iterator)
         except StopIteration:
