@@ -260,7 +260,9 @@ def test_rassi_module():
 
 
 def test_mol_prop():
+
     class RASSCFMolProps(log.ModuleRule):
+
         def __init__(self):
             super().__init__("rasscf", [general.MolProps()])
 

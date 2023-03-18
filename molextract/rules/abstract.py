@@ -30,6 +30,7 @@ class RuleListRule(Rule):
 
     A RuleListRule is a Rule itself and may be further nested in other rules.
     """
+
     def __init__(self, *args, rules=None, **kwargs):
         super().__init__(*args, **kwargs)
         if rules is None:
@@ -79,6 +80,7 @@ class SingleLineRule(Rule):
     Because these rules are meant to only execute on one line, any use of the
     iterator will result in an error.
     """
+
     def __init__(self, regex):
         """
         :param regex: the regex that defines the single line

@@ -154,6 +154,7 @@ class RASSCFCartesianCoords(Rule):
 
 
 class RASSCFModule(log.ModuleRule):
+
     def __init__(self):
         rules = [
             RASSCFEnergy(),

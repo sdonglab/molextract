@@ -2,6 +2,7 @@ from molextract.rules.abstract import RuleListRule
 
 
 class ModuleRule(RuleListRule):
+
     def __init__(self, name, rules=None, **kwargs):
         start_tag = f"--- Start Module: {name}"
         end_tag = f"--- Stop Module: {name}"

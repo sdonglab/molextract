@@ -40,6 +40,7 @@ _COLOR_CODES = {
 
 
 class ColorType(type):
+
     def __getattr__(self, item: str) -> str:
         code = _COLOR_CODES.get(item)
         if code is None:

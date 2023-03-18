@@ -53,6 +53,7 @@ class Rule:
             self.data.clear()
             return tmp
     """
+
     def __init__(self,
                  start_tag: str = r".*",
                  end_tag: str = r".*",

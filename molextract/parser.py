@@ -17,6 +17,7 @@ class Parser:
     provides a method to parse incoming string data via the `feed` method, and
     also a command line interface method `cli` to parse data from a file.
     """
+
     def __init__(self, rule: Rule):
         """
         Initialize the parser with the single rule that defines how parsing
