@@ -23,7 +23,7 @@ def test_start_tag_matches():
 
 
 @mock.patch('molextract.debug.log_start_tag')
-def test_start_tag_log(mock_log_start_tag):
+def test_log_start_tag(mock_log_start_tag):
     rule = Rule("Foo", "Bar", False)
     for level in debug.LOG_NAME_TO_LEVEL:
         with mock.patch('molextract.debug.MOLEXTRACT_LOG_LEVEL', level):
@@ -57,7 +57,7 @@ def test_end_tag_matches():
 
 
 @mock.patch('molextract.debug.log_end_tag')
-def test_start_tag_log(mock_log_end_tag):
+def test_log_end_tag(mock_log_end_tag):
     rule = Rule("Foo", "Bar", False)
     for level in debug.LOG_NAME_TO_LEVEL:
         with mock.patch('molextract.debug.MOLEXTRACT_LOG_LEVEL', level):

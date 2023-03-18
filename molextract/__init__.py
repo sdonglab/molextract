@@ -1,4 +1,4 @@
-from .rule import Rule
-from .parser import Parser
+from .rule import Rule  # noqa
+from .parser import Parser  # noqa
 
 __version__ = '1.0.0'

@@ -28,5 +28,8 @@ dynamic = ["version"]
 [tool.setuptools.dynamic]
 version = {attr = "molextract.__version__"}
 
+[tool.yapf]
+based_on_style = "google"
+
 [project.urls]
 Homepage = "https://github.com/sdonglab/molextract"

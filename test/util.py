@@ -14,6 +14,7 @@ def molextract_test_file(name) -> pathlib.Path:
 
 
 class IntRule(SingleLineRule):
+
     def __init__(self):
         super().__init__(r"\d+")
 
@@ -22,6 +23,7 @@ class IntRule(SingleLineRule):
 
 
 class WordRule(SingleLineRule):
+
     def __init__(self):
         super().__init__(r"\w+")
 
@@ -30,6 +32,7 @@ class WordRule(SingleLineRule):
 
 
 class IntOrWordRule(RuleListRule):
+
     def __init__(self):
         rules = [IntRule(), WordRule()]
         super().__init__("START", "END", rules=rules)

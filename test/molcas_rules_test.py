@@ -79,7 +79,7 @@ def test_mcpdft_module():
             {"mcsf_ref_energy": -346.48096556, "total_energy": -348.25755112},
             {"mcsf_ref_energy": -346.46964162, "total_energy": -348.13820937},
         ]
-    } # yapf:disable
+    }  # yapf:disable
     assert parser.feed(data) == expected_out
 
 
@@ -141,7 +141,7 @@ def test_rasscf_ci_expansion():
     data = textwrap.dedent("""\
     ++    CI expansion specifications:
       ----------------------------
- 
+
       Number of CSFs                         19404
       Number of root(s) required                 5
     --
@@ -167,7 +167,7 @@ def test_rasscf_coords():
         ('C1', -1.95753900, 1.13914500, -0.24454500),
         ('C2', -0.56753100, 1.19559100, -0.24210100),
         ('C3', 0.20626200, 0.05130000, 0.01285300)
-    ] # yapf: disable
+    ]  # yapf: disable
 
     with open(molextract_test_file("styrene.log")) as f:
         data = f.read()
@@ -192,7 +192,7 @@ def test_rasscf_coords():
         ('H17', 2.13096600, -1.41205500, -1.42790100),
         ('H18', 3.52934000, -0.89196400, -0.46661500),
         ('H19', 2.30707100, -1.94966800, 0.23834800)
-    ] # yapf: disable
+    ]  # yapf: disable
 
 
 def test_rasscf_module():
@@ -213,7 +213,7 @@ def test_rassi_dipole_strengths():
     ++ Dipole transition strengths (spin-free states):
     -----------------------------------------------
      for osc. strength at least  1.00000000E-05
- 
+
       From   To        Osc. strength     Einstein coefficients Ax, Ay, Az (sec-1)    Total A (sec-1)
      -----------------------------------------------------------------------------------------------
          1    2       4.4             2.41045247E+04  1.85073724E+04  4.66033848E+02  4.30779310E+04
@@ -239,7 +239,7 @@ def test_rassi_module():
     ++ Dipole transition strengths (spin-free states):
     -----------------------------------------------
      for osc. strength at least  1.00000000E-05
- 
+
       From   To        Osc. strength     Einstein coefficients Ax, Ay, Az (sec-1)    Total A (sec-1)
      -----------------------------------------------------------------------------------------------
          1    2       4.4             2.41045247E+04  1.85073724E+04  4.66033848E+02  4.30779310E+04
@@ -260,7 +260,9 @@ def test_rassi_module():
 
 
 def test_mol_prop():
+
     class RASSCFMolProps(log.ModuleRule):
+
         def __init__(self):
             super().__init__("rasscf", [general.MolProps()])
 
@@ -275,7 +277,7 @@ def test_mol_prop():
             {"dipole": {"x": -3.4706E-01, "y": -3.2306E-01, "z": -1.9238E-01, "total": 5.1169E-01}},
             {"dipole": {"x": 6.4402E-01, "y": -2.4521E-01, "z": -8.9307E-03, "total": 6.8918E-01}},
         ]
-    ] # yapf: disable
+    ]  # yapf: disable
 
     parser = Parser(general.MolProps())
     data = textwrap.dedent("""\

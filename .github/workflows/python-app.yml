@@ -27,11 +27,20 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install .
-        pip install flake8 pytest
+        pip install flake8 pytest mypy yapf toml
+    - name: Format check with yapf
+      run: |
+        yapf --recursive --diff .
     - name: Lint with flake8
       run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Lint the molextract package
+        flake8 molextract --statistics
+
+        # Ignore line lengths to make easier raw string testing
+        flake8 test --ignore E501 --statistic
+    - name: Type check with mypy
+      run: |
+        mypy molextract
     - name: Test with pytest
       run: |
         pytest

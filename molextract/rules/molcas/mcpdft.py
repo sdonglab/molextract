@@ -27,6 +27,7 @@ class MCPDFTRefEnergy(SingleLineRule):
 
 
 class MCPDFTModule(log.ModuleRule):
+
     def __init__(self):
         rules = [MCPDFTRefEnergy(), MCPDFTEnergy()]
         super().__init__("mcpdft", rules)

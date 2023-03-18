@@ -40,7 +40,8 @@ _COLOR_CODES = {
 
 
 class ColorType(type):
-    def __getattr__(self, item):
+
+    def __getattr__(self, item: str) -> str:
         code = _COLOR_CODES.get(item)
         if code is None:
             raise ValueError(f'{item} is not a valid color')
@@ -55,14 +56,14 @@ class Color(metaclass=ColorType):
     pass
 
 
-def log_start_tag(start_tag, rule_id):
+def log_start_tag(start_tag: str, rule_id: str):
     verb = "executed".ljust(VERB_LEFT_JUST)
     start_tag = start_tag.ljust(TAG_LEFT_JUST)
     msg = f'{start_tag} {Color.GREEN}{verb}{Color.RESET} {rule_id}'
     logger.debug(msg)
 
 
-def log_end_tag(end_tag, rule_id):
+def log_end_tag(end_tag: str, rule_id: str):
     verb = "ended".ljust(VERB_LEFT_JUST)
     end_tag = end_tag.ljust(TAG_LEFT_JUST)
     msg = f'{end_tag} {Color.RED}{verb}{Color.RESET} {rule_id}'
