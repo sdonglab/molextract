@@ -1,8 +1,7 @@
-
 from molextract.rules.orca import general
 from molextract.parser import Parser
 
-ORCA_LOG ="""**************
+ORCA_LOG = """**************
 
 -------------
 DIPOLE MOMENT
@@ -49,6 +48,7 @@ Magnitude (Debye)      :      1.820099920
 
 ORCA TERMINATED NORMALLY
 """
+
 
 def test_dipole_moment():
     parser = Parser(general.ORCADipoleMoment())

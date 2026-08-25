@@ -11,7 +11,8 @@ class ORCADipoleMoment(Rule):
     """
     _HEADER_RE = re.compile(r"DIPOLE MOMENT")
     _STATE_RE = re.compile(r"State\s*:\s*(\d+)")
-    _VECTOR_RE = re.compile(r"Total Dipole Moment\s*:\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)")
+    _VECTOR_RE = re.compile(
+        r"Total Dipole Moment\s*:\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)")
     _MAGNITUDE_RE = re.compile(r"Magnitude \(Debye\)\s*:\s*([-\d.]+)")
 
     def __init__(self):
