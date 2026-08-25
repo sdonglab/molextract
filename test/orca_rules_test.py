@@ -12,7 +12,7 @@ Type of density    : Electron Density
 Multiplicity       :   1
 Irrep              :   0
 Energy             :  -153.9592467839026426 Eh
-Relativity type    : 
+Relativity type    :
 Basis              : AO
                                 X                 Y                 Z
 Electronic contribution:      3.030774285       0.000000001       1.409400234
@@ -35,7 +35,7 @@ State              :   1
 Multiplicity       :   1
 Irrep              :   0
 Energy             :     0.0000000000000000 Eh
-Relativity type    : 
+Relativity type    :
 Basis              : AO
                                 X                 Y                 Z
 Electronic contribution:      3.386122984      -0.000000001       1.463710336
